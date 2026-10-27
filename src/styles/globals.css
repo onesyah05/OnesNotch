@@ -1,0 +1,528 @@
+@import "tailwindcss";
+
+/*
+ * Notch palette (source: user-provided swatch, uiux.build).
+ * Raw scale: ink-950 (darkest) → ink-100 (lightest).
+ * Use the semantic tokens below in components; the raw scale is for rare exceptions.
+ */
+@theme {
+  --color-ink-950: #111522;
+  --color-ink-900: #1e263b;
+  --color-ink-800: #303d59;
+  --color-ink-600: #536684;
+  --color-ink-300: #98a9c4;
+  --color-ink-100: #dce3ef;
+
+  /* Semantic roles */
+  --color-bg: var(--color-ink-950); /* pill + panel base */
+  --color-surface: var(--color-ink-900); /* cards, inputs, tabs */
+  --color-elevated: var(--color-ink-800); /* hover, borders, dividers */
+  --color-muted: var(--color-ink-600); /* placeholder, disabled, icons idle */
+  --color-subtle: var(--color-ink-300); /* secondary text */
+  --color-fg: var(--color-ink-100); /* primary text, active icons */
+
+  /* Status (outside the palette, used sparingly as tiny indicators) */
+  --color-live: #e5484d; /* "visible in capture" dot */
+  --color-ok: #46a758;
+
+  --font-sans:
+    "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --font-mono: "Cascadia Code", "Cascadia Mono", Consolas, monospace;
+
+  --radius-pill: 9999px;
+  --radius-panel: 28px;
+
+  --shadow-notch:
+    0 20px 48px -8px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(220 227 239 / 0.08),
+    inset 0 1px 0 rgb(220 227 239 / 0.28);
+  --shadow-glass:
+    0 28px 60px -12px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(220 227 239 / 0.1),
+    inset 0 1px 0 rgb(220 227 239 / 0.3);
+  --shadow-glass-card: inset 0 1px 0 rgb(220 227 239 / 0.16), 0 6px 20px -2px rgb(0 0 0 / 0.45);
+}
+
+@layer utilities {
+  .glass-notch {
+    background-color: var(--notch-bg, #111522);
+    border: 1px solid rgb(220 227 239 / 0.14);
+    box-shadow: var(--shadow-notch);
+  }
+
+  .glass-surface {
+    background: linear-gradient(150deg, rgb(30 38 59 / 0.62) 0%, rgb(20 26 42 / 0.7) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgb(220 227 239 / 0.1);
+    box-shadow: var(--shadow-glass-card);
+  }
+
+  .glass-elevated {
+    background: linear-gradient(180deg, rgb(48 61 89 / 0.88) 0%, rgb(30 38 59 / 0.82) 100%);
+    border: 1px solid rgb(220 227 239 / 0.26);
+    box-shadow:
+      inset 0 1px 0 rgb(220 227 239 / 0.32),
+      0 4px 12px rgb(0 0 0 / 0.4);
+  }
+
+  /* Aurora Drift Animations */
+  .animate-aurora-drift-1 {
+    animation: aurora-drift-1 12s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+
+  .animate-aurora-drift-2 {
+    animation: aurora-drift-2 16s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+
+  .animate-aurora-drift-3 {
+    animation: aurora-drift-3 14s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+
+  .animate-aurora-shimmer {
+    animation: aurora-shimmer 6s ease-in-out infinite alternate;
+    will-change: transform, opacity;
+  }
+
+  /* Liquid Water Ripple (Image 3: crisp cyan specular liquid glass glow) */
+  .liquid-ripple {
+    border-color: rgba(56, 189, 248, 0.75) !important;
+    animation: water-liquid-glow 3s ease-in-out infinite alternate !important;
+  }
+
+  /* Concentric Water Ripple Waves (Riak Gelombang Air) */
+  .animate-water-ripple-1 {
+    animation: water-ripple-expand 2.7s cubic-bezier(0.15, 0.85, 0.35, 1) infinite;
+    transform-origin: center center;
+    will-change: transform, opacity;
+  }
+
+  .animate-water-ripple-2 {
+    animation: water-ripple-expand 2.7s cubic-bezier(0.15, 0.85, 0.35, 1) 0.9s infinite;
+    transform-origin: center center;
+    will-change: transform, opacity;
+  }
+
+  .animate-water-ripple-3 {
+    animation: water-ripple-expand 2.7s cubic-bezier(0.15, 0.85, 0.35, 1) 1.8s infinite;
+    transform-origin: center center;
+    will-change: transform, opacity;
+  }
+
+  .animate-water-caustic-pulse {
+    animation: water-caustic-pulse 3s ease-in-out infinite alternate;
+    will-change: opacity, filter;
+  }
+
+  .animate-water-specular-shimmer {
+    animation: water-specular-shimmer 3.5s ease-in-out infinite alternate;
+    will-change: opacity;
+  }
+
+  /* Smooth Liquid Wave Notification (User reference: gooey water drops + edge glow) */
+  .liquid-container {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    filter: url(#smooth-liquid);
+  }
+
+  .liquid-base {
+    position: absolute;
+    inset: 0;
+    background: var(--notch-bg, #060d1a);
+    border-radius: 9999px;
+  }
+
+  .wave-drop {
+    position: absolute;
+    background: var(--notch-bg, #060d1a);
+    border-radius: 50%;
+  }
+
+  .drop-1 {
+    width: 32%;
+    height: 105%;
+    bottom: -28%;
+    left: 32%;
+    animation: liquid-wave-1 4.5s ease-in-out infinite alternate;
+  }
+
+  .drop-2 {
+    width: 25%;
+    height: 90%;
+    bottom: -20%;
+    left: 6%;
+    animation: liquid-wave-2 3.8s ease-in-out infinite alternate;
+  }
+
+  .drop-3 {
+    width: 27%;
+    height: 95%;
+    bottom: -24%;
+    right: 6%;
+    animation: liquid-wave-3 5.2s ease-in-out infinite alternate;
+  }
+
+  .top-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    box-shadow:
+      inset 0 1.5px 3px rgba(255, 255, 255, 0.3),
+      inset 0 8px 16px rgba(90, 175, 255, 0.15);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .expanded-liquid-glow {
+    box-shadow:
+      0 0 35px -5px rgba(56, 189, 248, 0.35),
+      0 24px 60px -10px rgba(0, 0, 0, 0.85),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 0 24px rgba(56, 189, 248, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.38) !important;
+  }
+}
+
+@keyframes liquid-wave-1 {
+  0% {
+    transform: translate(-12px, -3px) scale(0.95, 0.85);
+  }
+  50% {
+    transform: translate(8px, 5px) scale(1.1, 1.15);
+  }
+  100% {
+    transform: translate(20px, -2px) scale(0.9, 0.95);
+  }
+}
+
+@keyframes liquid-wave-2 {
+  0% {
+    transform: translate(0px, 3px) scale(1.05, 1.1);
+  }
+  50% {
+    transform: translate(16px, -5px) scale(0.9, 0.8);
+  }
+  100% {
+    transform: translate(-4px, 2px) scale(1, 1);
+  }
+}
+
+@keyframes liquid-wave-3 {
+  0% {
+    transform: translate(4px, -4px) scale(0.9, 0.85);
+  }
+  50% {
+    transform: translate(-16px, 4px) scale(1.08, 1.12);
+  }
+  100% {
+    transform: translate(-4px, 0px) scale(0.95, 0.9);
+  }
+}
+
+@keyframes water-ripple-expand {
+  0% {
+    transform: scale(0.98);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.85));
+  }
+  35% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.6));
+  }
+  75% {
+    opacity: 0.25;
+    filter: drop-shadow(0 0 16px rgba(56, 189, 248, 0.3));
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+    filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0));
+  }
+}
+
+@keyframes water-caustic-pulse {
+  0% {
+    opacity: 0.65;
+    filter: drop-shadow(0 4px 18px rgba(2, 132, 199, 0.45))
+      drop-shadow(0 0 10px rgba(56, 189, 248, 0.35));
+  }
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 6px 26px rgba(2, 132, 199, 0.75))
+      drop-shadow(0 0 18px rgba(56, 189, 248, 0.6));
+  }
+}
+
+@keyframes water-specular-shimmer {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes water-liquid-glow {
+  0% {
+    box-shadow:
+      0 4px 18px -2px rgba(14, 165, 233, 0.45),
+      0 0 10px rgba(56, 189, 248, 0.3),
+      inset 0 1px 2px rgba(255, 255, 255, 0.6),
+      inset 0 -2px 6px rgba(14, 165, 233, 0.25);
+  }
+  100% {
+    box-shadow:
+      0 6px 26px -1px rgba(14, 165, 233, 0.65),
+      0 0 16px rgba(56, 189, 248, 0.5),
+      inset 0 1px 3px rgba(255, 255, 255, 0.8),
+      inset 0 -3px 8px rgba(14, 165, 233, 0.38);
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-fg);
+    background: transparent;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: var(--color-ink-600);
+    color: var(--color-ink-100);
+  }
+}
+
+/* Scrollable content with a collapsed look (answer chip). */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Subtle, slim scrollbar for scrollable essay answers */
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-800) transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-ink-800);
+  border-radius: 9999px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ink-600);
+}
+
+/*
+ * Streaming AI answers render as markdown with code highlighting; colors stay
+ * within the palette so the notch reads as one surface.
+ */
+.md {
+  color: var(--color-fg);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.md-compact {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.md-compact p {
+  margin: 0;
+}
+
+.md > :first-child {
+  margin-top: 0;
+}
+
+.md > :last-child {
+  margin-bottom: 0;
+}
+
+.md p,
+.md ul,
+.md ol,
+.md blockquote,
+.md pre {
+  margin: 0.45em 0;
+}
+
+.md h1,
+.md h2,
+.md h3,
+.md h4,
+.md h5,
+.md h6 {
+  margin: 0.7em 0 0.3em;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.md ul,
+.md ol {
+  padding-left: 1.3em;
+}
+
+.md li {
+  margin: 0.2em 0;
+}
+
+.md ul {
+  list-style: disc;
+}
+
+.md ol {
+  list-style: decimal;
+}
+
+.md strong {
+  font-weight: 600;
+}
+
+.md blockquote {
+  border-left: 2px solid var(--color-ink-800);
+  padding-left: 0.7em;
+  color: var(--color-subtle);
+}
+
+.md hr {
+  border: none;
+  border-top: 1px solid var(--color-ink-800);
+}
+
+.md table {
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+
+.md th,
+.md td {
+  border: 1px solid var(--color-ink-800);
+  padding: 0.25em 0.55em;
+  text-align: left;
+}
+
+.md th {
+  background: var(--color-ink-900);
+}
+
+.md .md-link {
+  color: var(--color-fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.md :not(pre) > code,
+.md code {
+  border: 0;
+  background: var(--color-ink-900);
+  border-radius: 5px;
+  padding: 0.1em 0.35em;
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+.md pre {
+  position: relative;
+  overflow-x: auto;
+  padding: 10px 12px;
+  background: var(--color-ink-950);
+  border: 1px solid color-mix(in srgb, var(--color-ink-800) 60%, transparent);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.md pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 1em;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--color-ink-600);
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-meta,
+.hljs-attr {
+  color: var(--color-ink-300);
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: var(--color-ink-100);
+}
+
+.hljs-number,
+.hljs-built_in,
+.hljs-type {
+  color: var(--color-ink-100);
+}
+
+.hljs-title,
+.hljs-title.function_,
+.hljs-title.class_,
+.hljs-name {
+  color: var(--color-ink-100);
+  font-weight: 600;
+}
+
+.hljs-section,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-tag {
+  color: var(--color-ink-300);
+}
+
+.hljs-deletion {
+  color: var(--color-ink-600);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 600;
+}

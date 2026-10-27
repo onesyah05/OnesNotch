@@ -1,0 +1,360 @@
+{
+  "app": {
+    "name": "Notch"
+  },
+  "notch": {
+    "idle": "Siap",
+    "hiddenFromCapture": "Tersembunyi dari rekaman",
+    "visibleInCapture": "Terlihat di rekaman",
+    "openSettings": "Buka pengaturan",
+    "toggleCapture": "Ubah visibilitas di rekaman",
+    "collapse": "Kecilkan"
+  },
+  "tabs": {
+    "ai": "AI",
+    "music": "Musik",
+    "notifications": "Notifikasi",
+    "tools": "Alat"
+  },
+  "ai": {
+    "empty": {
+      "title": "Tanya apa pun yang tampil di layarmu",
+      "hint": "Pintasan: {{hotkey}}",
+      "screen": "Jawab layar",
+      "window": "Jawab jendela"
+    },
+    "status": {
+      "capturing": "Mengambil tangkapan layar secara senyap…",
+      "thinking": "Berpikir…",
+      "streaming": "Menjawab…",
+      "done": "Selesai",
+      "doneIn": "Dijawab dalam {{seconds}} dtk",
+      "cancelled": "Dibatalkan",
+      "error": "Gagal"
+    },
+    "you": "Kamu",
+    "actions": {
+      "cancel": "Hentikan jawaban",
+      "retry": "Ulangi",
+      "copy": "Salin jawaban",
+      "copied": "Tersalin",
+      "again": "Tangkap lagi",
+      "copyCode": "Salin kode"
+    },
+    "followUp": {
+      "placeholder": "Tanya lanjutan soal tangkapan layar…",
+      "send": "Kirim"
+    }
+  },
+  "providers": {
+    "anthropic": "Anthropic (Claude)",
+    "openai": "OpenAI",
+    "gemini": "Google Gemini",
+    "ollama": "Ollama (lokal)",
+    "openai_compatible": "OpenAI-compatible"
+  },
+  "errors": {
+    "no_key": "Belum ada API key. Tambahkan di Pengaturan → AI.",
+    "invalid_key": "API key tidak valid.",
+    "quota": "Kuota atau batas laju provider tercapai.",
+    "busy": "Provider sedang overload. Coba lagi sebentar.",
+    "model_not_found": "Model yang dipilih tidak ada di provider ini.",
+    "no_vision": "Model ini tidak bisa membaca tangkapan layar. Pilih model vision.",
+    "offline": "Jaringan tidak tersedia.",
+    "timeout": "Permintaan habis waktu.",
+    "provider": "Provider mengembalikan error.",
+    "capture_failed": "Layar tidak bisa ditangkap.",
+    "session_expired": "Sesi jawaban sudah kedaluwarsa. Tangkap lagi.",
+    "in_progress": "Masih ada jawaban yang sedang masuk.",
+    "paused": "Notch tersembunyi karena mode darurat.",
+    "invalid_input": "Nilai itu tidak valid.",
+    "hotkey_unavailable": "Pintasan itu sudah dipakai aplikasi lain.",
+    "storage": "Penyimpanan lokal gagal.",
+    "internal": "Terjadi kesalahan."
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "nav": {
+      "stealth": "Stealth",
+      "ai": "AI",
+      "notifications": "Notifikasi",
+      "appearance": "Tampilan",
+      "hotkeys": "Pintasan",
+      "about": "Tentang"
+    },
+    "stealth": {
+      "title": "Visibilitas rekaman",
+      "description": "Saat mati, Notch tidak muncul di screen share, rekaman, atau tangkapan layar.",
+      "visible": "Terlihat di rekaman",
+      "hidden": "Tersembunyi dari rekaman",
+      "alwaysOff": "Selalu mulai tersembunyi setiap aplikasi dijalankan.",
+      "oldBuild": "Build Windows ini lebih lama dari 10 2004. Sebagai gantinya, layar akan menampilkan peringatan saat ditangkap."
+    },
+    "ai": {
+      "title": "Jawaban AI",
+      "loading": "Memuat pengaturan…",
+      "provider": "Provider",
+      "providerHint": "Bawa API key-mu sendiri; permintaan langsung ke provider.",
+      "apiKey": "API key",
+      "keyStored": "Key tersimpan di Windows Credential Manager.",
+      "keyMissing": "Belum ada key yang tersimpan.",
+      "keyPlaceholder": "Tempel API key…",
+      "keyRequired": "Provider ini butuh API key sebelum bisa menjawab.",
+      "save": "Simpan",
+      "deleteKey": "Hapus",
+      "baseUrl": "Base URL",
+      "baseUrlHint": "Host yang sama menerima API key-mu — pakai hanya server yang dipercaya.",
+      "baseUrlPlaceholder": "http://localhost:1234/v1",
+      "model": "Model",
+      "modelHint": "Teks bebas; kosong memakai default ({{model}}).",
+      "connection": "Uji koneksi",
+      "connectionHint": "Menampilkan daftar model yang bisa dijangkau URL dan key yang tersimpan.",
+      "test": "Uji",
+      "testing": "Menguji…",
+      "modelsOne": "{{count}} model tersedia.",
+      "modelsMany": "{{count}} model tersedia.",
+      "captureMode": "Area tangkapan",
+      "captureModeScreen": "Layar",
+      "captureModeWindow": "Jendela aktif",
+      "history": "Simpan riwayat jawaban",
+      "historyHint": "Hanya teks, tersimpan lokal. Tangkapan layar tidak pernah disimpan."
+    },
+    "hotkeys": {
+      "title": "Pintasan",
+      "change": "Ubah",
+      "press": "Tekan tombol…",
+      "recording": "Esc membatalkan; wajib Ctrl, Alt atau Win.",
+      "hint": "Kombinasi wajib memakai Ctrl, Alt atau Win plus satu tombol, supaya menulis tidak pernah memunculkan Notch.",
+      "actions": {
+        "answerScreen": "Jawab layar",
+        "answerWindow": "Jawab jendela aktif",
+        "cancel": "Batal jawab",
+        "toggleExpand": "Buka/tutup panel",
+        "panic": "Sembunyikan darurat",
+        "toggleCapture": "Ubah visibilitas rekaman"
+      }
+    },
+    "panic": {
+      "button": "Sembunyikan darurat",
+      "hint": "Menyembunyikan semua jendela dan menghentikan pekerjaan latar.",
+      "active": "Mode darurat aktif."
+    },
+    "appearance": {
+      "title": "Tampilan",
+      "preview": "Pratinjau Langsung",
+      "previewSubtitle": "Simulasi tampilan Notch secara waktu-nyata.",
+      "accentColor": "Warna Aksen & Ritme",
+      "accentColorDesc": "Warna untuk animasi gelombang suara, tombol putar musik, dan sorotan progres.",
+      "backgroundColor": "Warna Latar Notch",
+      "backgroundColorDesc": "Warna dasar latar belakang pill dan panel Notch (default #111522).",
+      "customColor": "Warna Kustom",
+      "pickColor": "Buka Color Picker",
+      "hexCode": "Kode HEX",
+      "presets": "Pilihan Cepat",
+      "resetDefaults": "Reset ke Warna Default",
+      "defaultBadge": "Default",
+      "opacity": "Opasitas",
+      "opacityHint": "Berlaku untuk pill dan panel.",
+      "videoTitle": "Video Animasi Notch (MP4)",
+      "videoSubtitle": "Otomatis putar video MP4 secara acak di pill notch setiap interval waktu.",
+      "videoInterval": "Interval Putar (Detik)",
+      "videoDuration": "Durasi Tampil (Detik)",
+      "videoMuted": "Bisukan Audio (Muted)"
+    },
+    "about": {
+      "title": "Tentang",
+      "version": "Versi",
+      "tagline": "Dynamic Island untuk Windows."
+    },
+    "notifications": {
+      "title": "Smart Notifications",
+      "desc": "Menampilkan notifikasi Windows sebagai pill Dynamic Island di atas layar dengan preview pesan, pembuka aplikasi otomatis, dan filter Jangan Ganggu.",
+      "enable": "Aktifkan Notifikasi",
+      "enableDesc": "Tampilkan pop-up pill saat ada notifikasi masuk",
+      "dnd": "Mode Jangan Ganggu (DND)",
+      "dndDesc": "Hanya aplikasi di daftar putih yang diizinkan memunculkan pill pop-up",
+      "duration": "Durasi Pop-up Pill",
+      "durationHint": "Pill akan hilang otomatis jika kursor tidak diarahkan ke pill.",
+      "allowedApps": "Aplikasi Yang Diizinkan (Whitelist DND)",
+      "allowedAppsDesc": "Aplikasi ini tetap diizinkan memunculkan pill di layar bahkan saat DND aktif.",
+      "customAppPlaceholder": "Nama aplikasi lainnya...",
+      "testTitle": "Uji Coba Notifikasi",
+      "testDesc": "Kirim notifikasi simulasi untuk menguji tampilan pill di layar atas.",
+      "sendTest": "Kirim Notifikasi"
+    }
+  },
+  "notifications": {
+    "title": "Notifikasi",
+    "empty": "Belum ada notifikasi baru",
+    "emptyDesc": "Notifikasi Windows yang masuk akan muncul sebagai pill di atas layar dan tersimpan di sini.",
+    "justNow": "Baru saja",
+    "open": "Buka",
+    "openApp": "Buka Aplikasi",
+    "dismiss": "Tutup",
+    "clearAll": "Hapus Semua",
+    "dnd": "DND",
+    "dndActive": "DND Aktif",
+    "dndOnHint": "Jangan Ganggu Aktif (Hanya aplikasi diizinkan yang muncul)",
+    "dndOffHint": "Jangan Ganggu Nonaktif",
+    "allowed": "Diizinkan",
+    "filterApps": "Kelola Aplikasi Diizinkan",
+    "allowedWhitelist": "Aplikasi Lolos Filter DND",
+    "whitelistHint": "Pill tetap tampil saat DND aktif",
+    "addAppPlaceholder": "Tambah nama aplikasi lain (Enter)...",
+    "testSimulate": "Kirim Notifikasi Uji Coba",
+    "clickToOpenHint": "Klik kartu untuk membuka aplikasi",
+    "testAnother": "Uji Coba Lain"
+  },
+  "music": {
+    "title": "Kontrol Musik",
+    "emptyTitle": "Tidak Ada Musik Sedang Diputar",
+    "emptyHint": "Putar lagu di Spotify, YouTube Music, atau browser (Chrome/Edge) untuk mengontrol dari sini.",
+    "nowPlaying": "Sedang Diputar",
+    "unknownTitle": "Lagu Tidak Diketahui",
+    "unknownArtist": "Artis Tidak Diketahui",
+    "simulate": "Coba Putar Lagu Contoh",
+    "play": "Putar",
+    "pause": "Jeda",
+    "previous": "Sebelumnya",
+    "next": "Berikutnya",
+    "volume": "Volume",
+    "mute": "Bisukan",
+    "unmute": "Bunyikan"
+  },
+  "common": {
+    "add": "Tambah",
+    "seconds": "detik"
+  },
+  "tools": {
+    "title": "Alat Bantu",
+    "backToMenu": "Semua Alat",
+    "menuTitle": "Pusat Alat Bantu",
+    "menuSubtitle": "Pilih alat yang ingin kamu buka",
+    "openTool": "Buka",
+    "descriptions": {
+      "clipboard": "Riwayat teks yang kamu salin di Windows",
+      "timer": "Hitung mundur waktu dengan alarm & notifikasi",
+      "stopwatch": "Pengukur waktu presisi dengan catatan putaran",
+      "pomodoro": "Manajemen waktu kerja fokus & istirahat"
+    },
+    "status": {
+      "itemsCount": "{{count}} item",
+      "running": "Berjalan",
+      "ready": "Siap",
+      "completed": "Waktu Habis!",
+      "portsCount": "{{count}} Port",
+      "appsCount": "{{count}} Apps"
+    },
+    "nav": {
+      "clipboard": "Clipboard",
+      "timer": "Timer",
+      "stopwatch": "Stopwatch",
+      "pomodoro": "Pomodoro",
+      "ports": "List Port",
+      "runner": "Terminal Apps",
+      "scanner": "QR & Barcode"
+    },
+    "clipboard": {
+      "searchPlaceholder": "Cari riwayat clipboard...",
+      "clear": "Hapus Semua",
+      "clearAll": "Hapus semua riwayat clipboard",
+      "emptyTitle": "Riwayat Clipboard Kosong",
+      "emptyHint": "Teks yang kamu salin di Windows akan otomatis tersimpan di sini.",
+      "noSearchResults": "Tidak Ditemukan",
+      "noSearchHint": "Coba gunakan kata kunci pencarian yang lain.",
+      "copy": "Salin",
+      "copied": "Tersalin!",
+      "delete": "Hapus",
+      "loading": "Memuat riwayat..."
+    },
+    "timer": {
+      "start": "Mulai",
+      "pause": "Jeda",
+      "reset": "Reset",
+      "completed": "Waktu Habis!",
+      "custom": "Atur Waktu"
+    },
+    "stopwatch": {
+      "start": "Mulai",
+      "pause": "Jeda",
+      "reset": "Reset",
+      "lap": "Putaran",
+      "noLaps": "Belum ada catatan putaran"
+    },
+    "pomodoro": {
+      "work": "Fokus",
+      "shortBreak": "Istirahat",
+      "longBreak": "Istirahat Panjang",
+      "session": "Sesi",
+      "start": "Mulai Fokus",
+      "pause": "Jeda",
+      "reset": "Reset Sesi",
+      "skip": "Lewati ke Tahap Berikutnya",
+      "totalCompleted": "Total Sesi Selesai"
+    },
+    "ports": {
+      "searchPlaceholder": "Cari port, nama aplikasi, atau PID...",
+      "refresh": "Segarkan daftar port",
+      "loading": "Memindai port aktif...",
+      "empty": "Tidak ada port aktif yang sedang listening",
+      "noMatch": "Tidak ada port yang sesuai pencarian",
+      "kill": "Matikan",
+      "killed": "Dimatikan!",
+      "killTooltip": "Hentikan {{process}} (PID: {{pid}}, Port: {{port}})",
+      "systemProcess": "Proses sistem tidak dapat dimatikan"
+    },
+    "runner": {
+      "searchPlaceholder": "Cari app atau command...",
+      "addApp": "Tambah App",
+      "createTitle": "Tambah Shortcut App Baru",
+      "editTitle": "Edit Shortcut App",
+      "appName": "Nama Aplikasi",
+      "command": "Command / Perintah",
+      "commandStart": "Command Start",
+      "commandStop": "Command Stop (Opsional)",
+      "commandStopPlaceholder": "Default: Ctrl+C (atau isi misal docker compose down)",
+      "commandStopHelp": "Jika dikosongkan, default nya Ctrl+C untuk menghentikan proses.",
+      "directory": "Working Directory (Opsional)",
+      "browseFolder": "Pilih Folder...",
+      "noDirectory": "Default Terminal",
+      "cancel": "Batal",
+      "save": "Simpan Shortcut",
+      "run": "Jalankan",
+      "running": "Menjalankan...",
+      "stop": "Stop",
+      "stopping": "Menghentikan...",
+      "statusRunning": "Running",
+      "statusStopped": "Idle",
+      "success": "Berhasil!",
+      "empty": "Belum ada aplikasi yang disimpan",
+      "noMatch": "Tidak ada shortcut yang cocok",
+      "copy": "Salin Command",
+      "copied": "Tersalin!",
+      "edit": "Edit Shortcut",
+      "delete": "Hapus Shortcut"
+    },
+    "scanner": {
+      "title": "QR & Barcode Scanner",
+      "subtitle": "Pindai dari layar, file gambar, atau kamera lalu buka otomatis di browser",
+      "autoOpen": "Buka otomatis di browser",
+      "scanScreen": "Pindai Layar",
+      "uploadImage": "Pilih Gambar",
+      "openCamera": "Kamera",
+      "stopCamera": "Tutup Kamera",
+      "lastResult": "Hasil Pemindaian Terakhir",
+      "openUrl": "Buka Link",
+      "searchGoogle": "Cari di Google",
+      "copy": "Salin",
+      "copied": "Tersalin!",
+      "scanAgain": "Pindai Lagi",
+      "historyTitle": "Riwayat Pemindaian",
+      "clearHistory": "Hapus Semua",
+      "emptyHistory": "Belum ada kode yang dipindai",
+      "emptyHistoryHint": "Klik 'Pindai Layar' atau tekan Ctrl+V saat ada QR / barcode di clipboard",
+      "noCodeFound": "Tidak ditemukan QR Code atau Barcode yang jelas pada gambar.",
+      "openedUrl": "Link otomatis dibuka di browser!",
+      "searchedQuery": "Pencarian barcode dibuka di browser!",
+      "scannedSuccess": "Barcode berhasil dipindai!"
+    }
+  }
+}

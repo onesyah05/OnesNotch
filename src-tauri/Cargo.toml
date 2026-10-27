@@ -1,0 +1,88 @@
+[package]
+name = "notch"
+version = "0.1.1"
+description = "Dynamic-Island-style overlay for Windows, hidden from screen capture"
+authors = ["Notch"]
+edition = "2024"
+rust-version = "1.90"
+
+[lib]
+# The `_lib` suffix avoids a name clash between the lib and bin targets on Windows
+# (https://github.com/rust-lang/cargo/issues/8519).
+name = "notch_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+reqwest = { version = "0.13", default-features = false, features = ["native-tls", "http2", "json", "system-proxy"] }
+tokio = { version = "1", features = ["sync", "time", "macros", "rt"] }
+tokio-util = "0.7"
+base64 = "0.22"
+image = { version = "0.25", default-features = false, features = ["jpeg"] }
+rusqlite = { version = "0.41", features = ["bundled"] }
+tauri-plugin-store = "2"
+keyring-core = "1"
+sysinfo = "0.38.4"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.62", features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Direct3D",
+    "Win32_Graphics_Direct3D11",
+    "Win32_Graphics_Dwm",
+    "Win32_Graphics_Dxgi",
+    "Win32_Graphics_Dxgi_Common",
+    "Win32_Graphics_Gdi",
+    "Win32_System_Com",
+    "Win32_System_DataExchange",
+    "Win32_System_Memory",
+    "Win32_System_Ole",
+    "Win32_System_Registry",
+    "Win32_System_Threading",
+    "Win32_UI_HiDpi",
+    "Win32_UI_Input_KeyboardAndMouse",
+    "Win32_UI_Shell",
+    "Win32_UI_WindowsAndMessaging",
+    "ApplicationModel",
+    "UI_Notifications",
+    "UI_Notifications_Management",
+    "Foundation",
+    "Foundation_Collections",
+    "Media",
+    "Media_Control",
+    "Storage_Streams",
+    "Win32_Media_Audio",
+    "Win32_Media_Audio_Endpoints",
+    "Win32_System_Com_StructuredStorage",
+] }
+windows-native-keyring-store = "1"
+
+[lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+
+[lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+
+# Screenshot resize + JPEG encode is ~10x slower unoptimized; keep dev builds
+# close to the < 150 ms capture budget (PRD §7).
+[profile.dev.package.image]
+opt-level = 3
+
+# https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = "thin"
+opt-level = 3
+panic = "abort"
+strip = true

@@ -1,0 +1,360 @@
+{
+  "app": {
+    "name": "Notch"
+  },
+  "notch": {
+    "idle": "Ready",
+    "hiddenFromCapture": "Hidden from capture",
+    "visibleInCapture": "Visible in capture",
+    "openSettings": "Open settings",
+    "toggleCapture": "Toggle visibility in capture",
+    "collapse": "Collapse"
+  },
+  "tabs": {
+    "ai": "AI",
+    "music": "Music",
+    "notifications": "Notifications",
+    "tools": "Tools"
+  },
+  "ai": {
+    "empty": {
+      "title": "Ask about anything on your screen",
+      "hint": "Hotkey: {{hotkey}}",
+      "screen": "Answer screen",
+      "window": "Answer window"
+    },
+    "status": {
+      "capturing": "Taking a silent screenshot…",
+      "thinking": "Thinking…",
+      "streaming": "Answering…",
+      "done": "Done",
+      "doneIn": "Answered in {{seconds}} s",
+      "cancelled": "Cancelled",
+      "error": "Failed"
+    },
+    "you": "You",
+    "actions": {
+      "cancel": "Stop answering",
+      "retry": "Retry",
+      "copy": "Copy answer",
+      "copied": "Copied",
+      "again": "Capture again",
+      "copyCode": "Copy code"
+    },
+    "followUp": {
+      "placeholder": "Ask a follow-up about the screenshot…",
+      "send": "Send"
+    }
+  },
+  "providers": {
+    "anthropic": "Anthropic (Claude)",
+    "openai": "OpenAI",
+    "gemini": "Google Gemini",
+    "ollama": "Ollama (local)",
+    "openai_compatible": "OpenAI-compatible"
+  },
+  "errors": {
+    "no_key": "No API key saved yet. Add it in Settings → AI.",
+    "invalid_key": "The API key is not valid.",
+    "quota": "Quota or rate limit reached for this provider.",
+    "busy": "The provider is overloaded. Try again in a moment.",
+    "model_not_found": "The configured model does not exist on this provider.",
+    "no_vision": "This model cannot read screenshots. Choose a vision model.",
+    "offline": "Network unavailable.",
+    "timeout": "The request timed out.",
+    "provider": "The provider returned an error.",
+    "capture_failed": "The screen could not be captured.",
+    "session_expired": "The answer session has expired. Capture again.",
+    "in_progress": "An answer is already streaming.",
+    "paused": "Notch is hidden by panic mode.",
+    "invalid_input": "That value is not valid.",
+    "hotkey_unavailable": "That hotkey is already used by another app.",
+    "storage": "Local storage failed.",
+    "internal": "Something went wrong."
+  },
+  "settings": {
+    "title": "Settings",
+    "nav": {
+      "stealth": "Stealth",
+      "ai": "AI",
+      "notifications": "Notifications",
+      "appearance": "Appearance",
+      "hotkeys": "Hotkeys",
+      "about": "About"
+    },
+    "stealth": {
+      "title": "Capture visibility",
+      "description": "When off, Notch stays out of screen shares, recordings and screenshots.",
+      "visible": "Visible in capture",
+      "hidden": "Hidden from capture",
+      "alwaysOff": "Always starts hidden on every launch.",
+      "oldBuild": "This Windows build is older than 10 2004. A capture warning border will appear instead."
+    },
+    "ai": {
+      "title": "AI answer",
+      "loading": "Loading settings…",
+      "provider": "Provider",
+      "providerHint": "Bring your own key; requests go straight to the provider.",
+      "apiKey": "API key",
+      "keyStored": "Key stored in Windows Credential Manager.",
+      "keyMissing": "No key stored yet.",
+      "keyPlaceholder": "Paste API key…",
+      "keyRequired": "This provider needs an API key before it can answer.",
+      "save": "Save",
+      "deleteKey": "Delete",
+      "baseUrl": "Base URL",
+      "baseUrlHint": "Same host receives your key — only use servers you trust.",
+      "baseUrlPlaceholder": "http://localhost:1234/v1",
+      "model": "Model",
+      "modelHint": "Free text; empty uses the default ({{model}}).",
+      "connection": "Test connection",
+      "connectionHint": "Lists the models the URL reaches with the saved key.",
+      "test": "Test",
+      "testing": "Testing…",
+      "modelsOne": "{{count}} model available.",
+      "modelsMany": "{{count}} models available.",
+      "captureMode": "Capture area",
+      "captureModeScreen": "Screen",
+      "captureModeWindow": "Active window",
+      "history": "Save answer history",
+      "historyHint": "Text only, stored locally. Screenshots are never saved."
+    },
+    "hotkeys": {
+      "title": "Hotkeys",
+      "change": "Change",
+      "press": "Press keys…",
+      "recording": "Esc cancels; needs Ctrl, Alt or Win.",
+      "hint": "Combos need Ctrl, Alt or Win plus a key, so typing never triggers Notch.",
+      "actions": {
+        "answerScreen": "Answer screen",
+        "answerWindow": "Answer active window",
+        "cancel": "Cancel answer",
+        "toggleExpand": "Toggle panel",
+        "panic": "Panic hide",
+        "toggleCapture": "Toggle capture visibility"
+      }
+    },
+    "panic": {
+      "button": "Panic hide",
+      "hint": "Hides every window and stops background work.",
+      "active": "Panic mode is active."
+    },
+    "appearance": {
+      "title": "Appearance",
+      "preview": "Live Preview",
+      "previewSubtitle": "Real-time preview of the Notch pill.",
+      "accentColor": "Accent & Rhythm Color",
+      "accentColorDesc": "Color used for sound wave equalizer, play buttons, and playback progress highlights.",
+      "backgroundColor": "Notch Background Color",
+      "backgroundColorDesc": "Base background color for the Notch pill and panel (default #111522).",
+      "customColor": "Custom Color",
+      "pickColor": "Open Color Picker",
+      "hexCode": "HEX Code",
+      "presets": "Quick Presets",
+      "resetDefaults": "Reset to Default Colors",
+      "defaultBadge": "Default",
+      "opacity": "Opacity",
+      "opacityHint": "Applies to the pill and the expanded panel.",
+      "videoTitle": "Notch Video Animation (MP4)",
+      "videoSubtitle": "Automatically play random MP4 videos on the notch pill at scheduled intervals.",
+      "videoInterval": "Play Interval (Seconds)",
+      "videoDuration": "Display Duration (Seconds)",
+      "videoMuted": "Mute Audio"
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "tagline": "Dynamic Island for Windows."
+    },
+    "notifications": {
+      "title": "Smart Notifications",
+      "desc": "Displays Windows notifications as a Dynamic Island top pill with message preview, auto app launcher, and Do Not Disturb filter.",
+      "enable": "Enable Notifications",
+      "enableDesc": "Show pop-up pill when an incoming notification arrives",
+      "dnd": "Do Not Disturb (DND)",
+      "dndDesc": "Only allow whitelisted apps to trigger pop-up pills",
+      "duration": "Pill Pop-up Duration",
+      "durationHint": "Pill auto-dismisses if cursor is not hovering over it.",
+      "allowedApps": "Allowed Applications (DND Whitelist)",
+      "allowedAppsDesc": "These applications are allowed to pop up even when DND mode is active.",
+      "customAppPlaceholder": "Add custom app name...",
+      "testTitle": "Test Notification",
+      "testDesc": "Send a simulated notification to test top pill behavior.",
+      "sendTest": "Send Notification"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No new notifications",
+    "emptyDesc": "Incoming Windows notifications will appear as a pill at the top of your screen and be saved here.",
+    "justNow": "Just now",
+    "open": "Open",
+    "openApp": "Open App",
+    "dismiss": "Dismiss",
+    "clearAll": "Clear All",
+    "dnd": "DND",
+    "dndActive": "DND Active",
+    "dndOnHint": "Do Not Disturb Active (Only whitelisted apps appear)",
+    "dndOffHint": "Do Not Disturb Inactive",
+    "allowed": "Allowed",
+    "filterApps": "Manage Allowed Apps",
+    "allowedWhitelist": "DND Allowed Applications",
+    "whitelistHint": "Pill still pops up during DND",
+    "addAppPlaceholder": "Add another application (Enter)...",
+    "testSimulate": "Send Test Notification",
+    "clickToOpenHint": "Click card to open application",
+    "testAnother": "Test Another"
+  },
+  "music": {
+    "title": "Music Control",
+    "emptyTitle": "No Music Playing",
+    "emptyHint": "Play a track on Spotify, YouTube Music, or browser (Chrome/Edge) to control from here.",
+    "nowPlaying": "Now Playing",
+    "unknownTitle": "Unknown Title",
+    "unknownArtist": "Unknown Artist",
+    "simulate": "Try Sample Track",
+    "play": "Play",
+    "pause": "Pause",
+    "previous": "Previous",
+    "next": "Next",
+    "volume": "Volume",
+    "mute": "Mute",
+    "unmute": "Unmute"
+  },
+  "common": {
+    "add": "Add",
+    "seconds": "seconds"
+  },
+  "tools": {
+    "title": "Tools",
+    "backToMenu": "All Tools",
+    "menuTitle": "Tools Hub",
+    "menuSubtitle": "Select a utility tool to use",
+    "openTool": "Open",
+    "descriptions": {
+      "clipboard": "History of copied text in Windows",
+      "timer": "Countdown timer with notification alert",
+      "stopwatch": "Precision stopwatch with lap records",
+      "pomodoro": "Interval timer for focus & short breaks"
+    },
+    "status": {
+      "itemsCount": "{{count}} items",
+      "running": "Running",
+      "ready": "Ready",
+      "completed": "Time's up!",
+      "portsCount": "{{count}} Ports",
+      "appsCount": "{{count}} Apps"
+    },
+    "nav": {
+      "clipboard": "Clipboard",
+      "timer": "Timer",
+      "stopwatch": "Stopwatch",
+      "pomodoro": "Pomodoro",
+      "ports": "Port List",
+      "runner": "Terminal Apps",
+      "scanner": "QR & Barcode"
+    },
+    "clipboard": {
+      "searchPlaceholder": "Search clipboard history...",
+      "clear": "Clear All",
+      "clearAll": "Clear all clipboard history",
+      "emptyTitle": "Clipboard History Empty",
+      "emptyHint": "Text you copy on Windows will automatically appear here.",
+      "noSearchResults": "No Results Found",
+      "noSearchHint": "Try using a different search keyword.",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "delete": "Delete",
+      "loading": "Loading history..."
+    },
+    "timer": {
+      "start": "Start",
+      "pause": "Pause",
+      "reset": "Reset",
+      "completed": "Time's Up!",
+      "custom": "Set Custom"
+    },
+    "stopwatch": {
+      "start": "Start",
+      "pause": "Pause",
+      "reset": "Reset",
+      "lap": "Lap",
+      "noLaps": "No laps recorded yet"
+    },
+    "pomodoro": {
+      "work": "Focus",
+      "shortBreak": "Short Break",
+      "longBreak": "Long Break",
+      "session": "Session",
+      "start": "Start Focus",
+      "pause": "Pause",
+      "reset": "Reset Session",
+      "skip": "Skip to Next Phase",
+      "totalCompleted": "Total Sessions Completed"
+    },
+    "ports": {
+      "searchPlaceholder": "Search port, app name, or PID...",
+      "refresh": "Refresh active ports",
+      "loading": "Scanning active ports...",
+      "empty": "No active listening ports found",
+      "noMatch": "No ports match your search",
+      "kill": "Kill",
+      "killed": "Killed!",
+      "killTooltip": "Terminate {{process}} (PID: {{pid}}, Port: {{port}})",
+      "systemProcess": "System process cannot be terminated"
+    },
+    "runner": {
+      "searchPlaceholder": "Search app or command...",
+      "addApp": "Add App",
+      "createTitle": "Add New App Shortcut",
+      "editTitle": "Edit App Shortcut",
+      "appName": "App Name",
+      "command": "Command / Script",
+      "commandStart": "Command Start",
+      "commandStop": "Command Stop (Optional)",
+      "commandStopPlaceholder": "Default: Ctrl+C (or e.g. docker compose down)",
+      "commandStopHelp": "If left empty, defaults to sending Ctrl+C to terminate the process.",
+      "directory": "Working Directory (Optional)",
+      "browseFolder": "Browse Folder...",
+      "noDirectory": "Default Terminal",
+      "cancel": "Cancel",
+      "save": "Save Shortcut",
+      "run": "Run",
+      "running": "Running...",
+      "stop": "Stop",
+      "stopping": "Stopping...",
+      "statusRunning": "Running",
+      "statusStopped": "Idle",
+      "success": "Started!",
+      "empty": "No apps saved yet",
+      "noMatch": "No shortcuts match your search",
+      "copy": "Copy Command",
+      "copied": "Copied!",
+      "edit": "Edit Shortcut",
+      "delete": "Delete Shortcut"
+    },
+    "scanner": {
+      "title": "QR & Barcode Scanner",
+      "subtitle": "Scan from screen, image file, or camera and open automatically in browser",
+      "autoOpen": "Auto-open in browser",
+      "scanScreen": "Scan Screen",
+      "uploadImage": "Upload Image",
+      "openCamera": "Camera",
+      "stopCamera": "Close Camera",
+      "lastResult": "Last Scan Result",
+      "openUrl": "Open Link",
+      "searchGoogle": "Search on Google",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "scanAgain": "Scan Again",
+      "historyTitle": "Scan History",
+      "clearHistory": "Clear All",
+      "emptyHistory": "No codes scanned yet",
+      "emptyHistoryHint": "Click 'Scan Screen' or press Ctrl+V with an image in clipboard",
+      "noCodeFound": "No clear QR Code or Barcode found in image.",
+      "openedUrl": "Link automatically opened in browser!",
+      "searchedQuery": "Barcode search opened in browser!",
+      "scannedSuccess": "Barcode scanned successfully!"
+    }
+  }
+}
