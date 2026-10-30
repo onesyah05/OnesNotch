@@ -127,9 +127,9 @@ Pengguna yang sudah memasang OnesNotch 0.2.0 ke atas akan otomatis diberi tahu s
 Pembaruan ditandatangani supaya aplikasi hanya memasang installer asli. Kunci publik sudah ada di `src-tauri/tauri.conf.json`; kunci privat **tidak boleh** masuk repo.
 
 - Kunci privat: `~/.tauri/onesnotch.key`. Simpan cadangannya di tempat aman (mis. password manager). Jika hilang, versi yang sudah terpasang tidak bisa menerima pembaruan lagi.
-- Tambahkan sebagai secret repository `TAURI_SIGNING_PRIVATE_KEY`:
+- Sudah ditambahkan sebagai secret repository `ONESNOTCH` (dipakai workflow Release). Untuk mengganti:
   ```bash
-  gh secret set TAURI_SIGNING_PRIVATE_KEY < ~/.tauri/onesnotch.key
+  gh secret set ONESNOTCH < ~/.tauri/onesnotch.key
   ```
 - Build lokal dengan `npm run tauri build` juga butuh kunci ini:
   ```powershell

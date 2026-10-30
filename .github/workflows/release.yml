@@ -2,7 +2,7 @@
 # `latest.json`, which installed copies of OnesNotch poll for updates.
 #
 # Trigger: push a tag that matches the app version, e.g. `git tag v0.2.0 && git push origin v0.2.0`.
-# Needs repository secrets TAURI_SIGNING_PRIVATE_KEY (contents of ~/.tauri/onesnotch.key)
+# Needs repository secret ONESNOTCH (contents of ~/.tauri/onesnotch.key)
 # and, if the key has one, TAURI_SIGNING_PRIVATE_KEY_PASSWORD.
 name: Release
 
@@ -60,7 +60,7 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.ONESNOTCH }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: ${{ github.ref_name }}
