@@ -11,8 +11,20 @@ import { ProviderSection } from "../../features/settings/provider-section";
 import { X } from "lucide-react";
 import { AuroraGradient } from "../../components/aurora-gradient";
 import { NotificationSection } from "../../features/settings/notification-section";
+import { GeneralSection } from "../../features/settings/general-section";
+import { WaterSection } from "../../features/settings/water-section";
+import { UpdateSection } from "../../features/settings/update-section";
 
-const SECTIONS = ["stealth", "ai", "notifications", "appearance", "hotkeys", "about"] as const;
+const SECTIONS = [
+  "general",
+  "stealth",
+  "ai",
+  "notifications",
+  "water",
+  "appearance",
+  "hotkeys",
+  "about",
+] as const;
 type Section = (typeof SECTIONS)[number];
 
 const MIN_SUPPORTED_BUILD = 19_041;
@@ -20,7 +32,7 @@ const MIN_SUPPORTED_BUILD = 19_041;
 export function SettingsWindow() {
   const { t } = useTranslation();
   const visibleInCapture = useNotchStore((state) => state.visibleInCapture);
-  const [section, setSection] = useState<Section>("stealth");
+  const [section, setSection] = useState<Section>("general");
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
 
   useEffect(() => {
@@ -37,6 +49,7 @@ export function SettingsWindow() {
       events.opacityChanged(({ opacity: value }) => useNotchStore.getState().setOpacity(value)),
       events.themeChanged((theme) => useThemeStore.getState().setTheme(theme)),
       events.panicChanged(({ active }) => useNotchStore.getState().setPanic(active)),
+      events.settingsChanged(() => void useSettingsStore.getState().load()),
     ];
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,23 +80,23 @@ export function SettingsWindow() {
       {/* Fluid atmospheric aurora gradient backdrop */}
       <AuroraGradient variant="settings" />
 
-      <header className="relative z-10 flex h-12 shrink-0 items-center justify-between px-6 text-sm font-semibold border-b border-white/[0.08] bg-surface/35 backdrop-blur-md">
+      <header className="relative z-10 flex h-12 shrink-0 items-center justify-between px-6 text-sm font-semibold border-b border-fg/[0.08] bg-surface/35 backdrop-blur-md">
         <span>{t("settings.title")}</span>
         <button
           type="button"
           onClick={() => {
             void ipc.hideSettings().catch(() => {});
           }}
-          className="flex items-center justify-center size-7 rounded-lg text-muted hover:bg-white/[0.08] hover:text-fg transition-colors"
-          title={t("common.close") ?? "Close"}
-          aria-label={t("common.close") ?? "Close"}
+          className="flex items-center justify-center size-7 rounded-lg text-muted hover:bg-fg/[0.08] hover:text-fg transition-colors"
+          title={t("common.close")}
+          aria-label={t("common.close")}
         >
           <X className="size-4" />
         </button>
       </header>
 
       <div className="relative z-10 flex min-h-0 flex-1">
-        <nav className="flex w-44 shrink-0 flex-col gap-1.5 border-r border-white/[0.08] bg-surface/25 backdrop-blur-md p-3">
+        <nav className="flex w-44 shrink-0 flex-col gap-1.5 border-r border-fg/[0.08] bg-surface/25 backdrop-blur-md p-3">
           {SECTIONS.map((key) => (
             <button
               key={key}
@@ -101,6 +114,8 @@ export function SettingsWindow() {
         </nav>
 
         <section className="flex-1 overflow-y-auto p-6">
+          {section === "general" && <GeneralSection />}
+
           {section === "stealth" && (
             <div className="flex flex-col gap-4">
               <SectionTitle title={t("settings.stealth.title")} />
@@ -122,6 +137,8 @@ export function SettingsWindow() {
 
           {section === "notifications" && <NotificationSection />}
 
+          {section === "water" && <WaterSection />}
+
           {section === "appearance" && <AppearanceSection />}
 
           {section === "hotkeys" && <HotkeySection />}
@@ -129,15 +146,13 @@ export function SettingsWindow() {
           {section === "about" && (
             <div className="flex flex-col gap-4">
               <SectionTitle title={t("settings.about.title")} />
-              <SettingsRow label="OnesNotch">
-                <span className="text-xs font-semibold text-cyan-400">
-                  {appInfo?.name ?? "OnesNotch"}
-                </span>
-              </SettingsRow>
-              <SettingsRow label={t("settings.about.version")}>
-                <kbd className="font-mono text-xs text-subtle">{appInfo?.version ?? "0.1.0"}</kbd>
+              <SettingsRow label={appInfo?.name ?? "OnesNotch"}>
+                <kbd className="font-mono text-xs text-subtle">
+                  {t("settings.about.version")} {appInfo?.version ?? "…"}
+                </kbd>
               </SettingsRow>
               <p className="text-sm text-subtle">{t("settings.about.tagline")}</p>
+              <UpdateSection currentVersion={appInfo?.version ?? null} />
               {oldBuild && (
                 <p className="rounded-lg bg-surface p-3 text-xs text-live">
                   {t("settings.stealth.oldBuild")}

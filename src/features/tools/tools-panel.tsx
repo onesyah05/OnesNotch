@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Clock,
   Flame,
+  GlassWater,
   GripVertical,
   Network,
   QrCode,
@@ -22,21 +23,19 @@ import { PomodoroTool } from "./pomodoro-tool";
 import { PortsTool } from "./ports-tool";
 import { RunnerTool } from "./runner-tool";
 import { ScannerTool } from "./scanner-tool";
+import { WaterTool } from "./water-tool";
 import { useTimerStore } from "../../stores/useTimerStore";
 import { useStopwatchStore } from "../../stores/useStopwatchStore";
 import { usePomodoroStore } from "../../stores/usePomodoroStore";
 import { useClipboardStore } from "../../stores/useClipboardStore";
 import { usePortStore } from "../../stores/usePortStore";
 import { useRunnerStore } from "../../stores/useRunnerStore";
+import { useWaterStore } from "../../stores/useWaterStore";
+import { useSettingsStore } from "../../stores/useSettingsStore";
+import { dailyTargetMl } from "../water/schedule";
 
 export type ToolType =
-  | "clipboard"
-  | "timer"
-  | "stopwatch"
-  | "pomodoro"
-  | "ports"
-  | "runner"
-  | "scanner";
+  "clipboard" | "timer" | "stopwatch" | "pomodoro" | "ports" | "runner" | "scanner" | "water";
 
 const DEFAULT_TOOL_ORDER: ToolType[] = [
   "clipboard",
@@ -46,6 +45,7 @@ const DEFAULT_TOOL_ORDER: ToolType[] = [
   "ports",
   "runner",
   "scanner",
+  "water",
 ];
 
 const STORAGE_ORDER_KEY = "notch_tools_order";
@@ -109,6 +109,10 @@ export function ToolsPanel() {
 
   const runnerApps = useRunnerStore((s) => s.apps);
 
+  const waterConsumed = useWaterStore((s) => s.progress.consumedMl);
+  const waterReminder = useWaterStore((s) => s.reminderActive);
+  const waterSettings = useSettingsStore((s) => s.settings?.water);
+
   useEffect(() => {
     void loadPorts();
   }, [loadPorts]);
@@ -118,8 +122,6 @@ export function ToolsPanel() {
       id: "clipboard" as const,
       title: t("tools.nav.clipboard"),
       icon: ClipboardList,
-      accentGlow: "rgb(34 211 238 / 0.15)",
-      accentColor: "var(--notch-accent, #22d3ee)",
       badge:
         clipboardItems.length > 0
           ? t("tools.status.itemsCount", { count: clipboardItems.length })
@@ -130,12 +132,10 @@ export function ToolsPanel() {
       id: "timer" as const,
       title: t("tools.nav.timer"),
       icon: Timer,
-      accentGlow: "rgb(34 211 238 / 0.15)",
-      accentColor: "var(--notch-accent, #22d3ee)",
       badge: isTimerCompleted
         ? t("tools.status.completed")
         : isTimerRunning
-          ? `${formatSeconds(timerRemaining)} • ${t("tools.status.running")}`
+          ? `${formatSeconds(timerRemaining)} · ${t("tools.status.running")}`
           : `${Math.round(timerDuration / 60)}m`,
       activeDot: isTimerRunning || isTimerCompleted,
       isAlert: isTimerCompleted,
@@ -144,8 +144,6 @@ export function ToolsPanel() {
       id: "stopwatch" as const,
       title: t("tools.nav.stopwatch"),
       icon: Clock,
-      accentGlow: "rgb(59 130 246 / 0.15)",
-      accentColor: "#3b82f6",
       badge: isStopwatchRunning ? t("tools.status.running") : t("tools.status.ready"),
       activeDot: isStopwatchRunning,
     },
@@ -153,19 +151,15 @@ export function ToolsPanel() {
       id: "pomodoro" as const,
       title: t("tools.nav.pomodoro"),
       icon: Flame,
-      accentGlow: "rgb(245 158 11 / 0.15)",
-      accentColor: "#f59e0b",
       badge: isPomodoroRunning
-        ? `${pomodoroMode === "work" ? "Fokus" : "Break"} • ${formatSeconds(pomodoroRemaining)}`
-        : `25m • Sesi ${pomodoroCycle}/4`,
+        ? `${t(pomodoroMode === "work" ? "tools.status.focus" : "tools.status.break")} · ${formatSeconds(pomodoroRemaining)}`
+        : t("tools.status.session", { cycle: pomodoroCycle }),
       activeDot: isPomodoroRunning,
     },
     {
       id: "ports" as const,
       title: t("tools.nav.ports"),
       icon: Network,
-      accentGlow: "rgb(168 85 247 / 0.15)",
-      accentColor: "#a855f7",
       badge:
         ports.length > 0
           ? t("tools.status.portsCount", { count: ports.length })
@@ -174,10 +168,8 @@ export function ToolsPanel() {
     },
     {
       id: "runner" as const,
-      title: t("tools.nav.runner", "Terminal Apps"),
+      title: t("tools.nav.runner"),
       icon: SquareTerminal,
-      accentGlow: "rgb(34 211 238 / 0.15)",
-      accentColor: "#22d3ee",
       badge:
         runnerApps.length > 0
           ? t("tools.status.appsCount", { count: runnerApps.length })
@@ -186,12 +178,20 @@ export function ToolsPanel() {
     },
     {
       id: "scanner" as const,
-      title: t("tools.nav.scanner", "QR & Barcode"),
+      title: t("tools.nav.scanner"),
       icon: QrCode,
-      accentGlow: "rgb(34 211 238 / 0.15)",
-      accentColor: "#22d3ee",
-      badge: t("tools.status.ready", "Ready"),
+      badge: t("tools.status.ready"),
       activeDot: false,
+    },
+    {
+      id: "water" as const,
+      title: t("tools.nav.water"),
+      icon: GlassWater,
+      badge: waterSettings
+        ? `${Math.round((waterConsumed / Math.max(1, dailyTargetMl(waterSettings.weightKg))) * 100)}%`
+        : t("tools.status.ready"),
+      activeDot: waterConsumed > 0,
+      isAlert: waterReminder,
     },
   ];
 
@@ -317,9 +317,7 @@ export function ToolsPanel() {
                 <h3 className="text-xs font-semibold tracking-wide text-fg">
                   {t("tools.menuTitle")}
                 </h3>
-                <p className="text-[11px] text-subtle">
-                  Geser kartu atau klik tombol panah untuk mengatur posisi
-                </p>
+                <p className="text-[11px] text-subtle">{t("tools.reorderHint")}</p>
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -327,15 +325,15 @@ export function ToolsPanel() {
                   <button
                     type="button"
                     onClick={handleResetOrder}
-                    title="Reset urutan ke default"
-                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/5 hover:bg-white/10 text-muted hover:text-fg text-[10px] border border-white/10 transition-colors"
+                    title={t("tools.resetOrder")}
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-fg/5 hover:bg-fg/10 text-muted hover:text-fg text-[10px] border border-fg/10 transition-colors"
                   >
                     <RotateCcw className="size-2.5" />
-                    <span>Reset</span>
+                    <span>{t("common.reset")}</span>
                   </button>
                 )}
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/10 text-subtle border border-white/10">
-                  {TOOLS_LIST.length} Tools
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-fg/10 text-subtle border border-fg/10">
+                  {t("tools.count", { count: TOOLS_LIST.length })}
                 </span>
               </div>
             </div>
@@ -357,27 +355,24 @@ export function ToolsPanel() {
                     onPointerDown={(e) => handlePointerDown(e, tool.id)}
                     className={`group relative flex flex-col justify-between text-left rounded-2xl glass-surface p-3 border transition-all duration-200 cursor-pointer overflow-hidden min-h-[102px] select-none ${
                       isDragging
-                        ? "opacity-50 border-cyan-400 ring-2 ring-cyan-400/50 shadow-2xl scale-[1.03] z-30"
-                        : "border-white/10 hover:border-white/25 hover:glass-elevated hover:shadow-lg active:scale-[0.98]"
+                        ? "opacity-50 border-accent ring-2 ring-accent/50 shadow-2xl scale-[1.03] z-30"
+                        : "border-fg/10 hover:border-fg/25 hover:glass-elevated hover:shadow-lg active:scale-[0.98]"
                     }`}
                   >
                     {/* Background subtle hover glow */}
-                    <div
-                      className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full blur-2xl opacity-0 group-hover:opacity-75 transition-opacity duration-300"
-                      style={{ background: tool.accentGlow }}
-                    />
+                    <div className="pointer-events-none absolute -right-6 -top-6 size-24 rounded-full bg-accent/15 blur-2xl opacity-0 group-hover:opacity-75 transition-opacity duration-300" />
 
                     {/* Quick Move Arrows & Drag Handle (Visible on hover) */}
                     <div
-                      className="absolute right-2 top-2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-md rounded-lg p-0.5 border border-white/10 z-20"
+                      className="absolute right-2 top-2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-md rounded-lg p-0.5 border border-fg/10 z-20"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {canMoveLeft && (
                         <button
                           type="button"
                           onClick={() => moveTool(tool.id, "left")}
-                          title="Geser ke kiri"
-                          className="size-4 flex items-center justify-center rounded text-muted hover:text-white hover:bg-white/10"
+                          title={t("tools.moveLeft")}
+                          className="size-4 flex items-center justify-center rounded text-muted hover:text-fg hover:bg-fg/10"
                         >
                           <ChevronLeft className="size-3" />
                         </button>
@@ -387,8 +382,8 @@ export function ToolsPanel() {
                         <button
                           type="button"
                           onClick={() => moveTool(tool.id, "right")}
-                          title="Geser ke kanan"
-                          className="size-4 flex items-center justify-center rounded text-muted hover:text-white hover:bg-white/10"
+                          title={t("tools.moveRight")}
+                          className="size-4 flex items-center justify-center rounded text-muted hover:text-fg hover:bg-fg/10"
                         >
                           <ChevronRight className="size-3" />
                         </button>
@@ -397,11 +392,8 @@ export function ToolsPanel() {
 
                     {/* Card Top: Icon & Live Badge */}
                     <div className="flex items-center justify-between w-full pointer-events-none">
-                      <div
-                        className="flex items-center justify-center size-8 rounded-xl border border-white/10 group-hover:scale-105 transition-transform"
-                        style={{ background: tool.accentGlow }}
-                      >
-                        <Icon className="size-4" style={{ color: tool.accentColor }} />
+                      <div className="flex items-center justify-center size-8 rounded-xl bg-accent/15 border border-fg/10 group-hover:scale-105 transition-transform">
+                        <Icon className="size-4 text-accent" />
                       </div>
 
                       {tool.badge && (
@@ -410,15 +402,12 @@ export function ToolsPanel() {
                             tool.isAlert
                               ? "bg-live/20 border-live/40 text-live animate-pulse"
                               : tool.activeDot
-                                ? "bg-white/15 border-white/20 text-fg"
-                                : "bg-white/5 border-white/10 text-subtle"
+                                ? "bg-fg/15 border-fg/20 text-fg"
+                                : "bg-fg/5 border-fg/10 text-subtle"
                           }`}
                         >
                           {tool.activeDot && !tool.isAlert && (
-                            <span
-                              className="size-1 rounded-full shrink-0 animate-pulse"
-                              style={{ backgroundColor: tool.accentColor }}
-                            />
+                            <span className="size-1 rounded-full shrink-0 animate-pulse bg-accent" />
                           )}
                           <span className="truncate max-w-[70px]">{tool.badge}</span>
                         </span>
@@ -427,7 +416,7 @@ export function ToolsPanel() {
 
                     {/* Card Bottom: Title */}
                     <div className="mt-2.5 pointer-events-none">
-                      <h4 className="text-[13px] font-semibold text-fg tracking-tight group-hover:text-white transition-colors truncate">
+                      <h4 className="text-[13px] font-semibold text-fg tracking-tight group-hover:text-fg transition-colors truncate">
                         {tool.title}
                       </h4>
                     </div>
@@ -449,11 +438,11 @@ export function ToolsPanel() {
             className="flex flex-col h-full overflow-hidden"
           >
             {/* Top Navigation Bar: Back Button & Tool Header */}
-            <header className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/10 shrink-0">
+            <header className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-fg/10 shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveTool(null)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/12 text-xs font-medium text-subtle hover:text-fg border border-white/10 transition-colors active:scale-95"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-fg/5 hover:bg-fg/12 text-xs font-medium text-subtle hover:text-fg border border-fg/10 transition-colors active:scale-95"
               >
                 <ArrowLeft className="size-3.5" />
                 <span>{t("tools.backToMenu")}</span>
@@ -463,7 +452,7 @@ export function ToolsPanel() {
                 <span className="text-xs font-semibold text-fg">
                   {TOOLS_LIST.find((t) => t.id === activeTool)?.title}
                 </span>
-                <span className="size-1.5 rounded-full bg-cyan-400" />
+                <span className="size-1.5 rounded-full bg-accent" />
               </div>
             </header>
 
@@ -476,6 +465,7 @@ export function ToolsPanel() {
               {activeTool === "ports" && <PortsTool />}
               {activeTool === "runner" && <RunnerTool />}
               {activeTool === "scanner" && <ScannerTool />}
+              {activeTool === "water" && <WaterTool />}
             </div>
           </motion.div>
         )}

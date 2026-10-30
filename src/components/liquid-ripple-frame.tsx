@@ -20,7 +20,7 @@ export const LiquidRippleFrame = memo(function LiquidRippleFrame({
   children,
 }: LiquidRippleFrameProps) {
   return (
-    <div className={`relative h-full w-full select-none ${className}`}>
+    <div className={`relative h-full w-full rounded-[inherit] select-none ${className}`}>
       {/* SVG Filters for Smooth Liquid Gooey + Edge Blue Glow Effect */}
       <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
         <defs>

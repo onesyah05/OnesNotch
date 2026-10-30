@@ -71,14 +71,17 @@ pub struct AppState {
     /// the real footprint, which only the frontend knows.
     answer_width: AtomicU32,
     answer_height: AtomicU32,
+    /// Auto-hide has tucked the pill above the screen edge; the hover thread
+    /// then only watches a thin strip so the top of other apps stays clickable.
+    concealed: AtomicBool,
 }
 
-/// Chip size clamp: the window is 640x480 logical and the chip floats 12px
-/// below the screen top.
+/// Chip size clamp: the window is 640x480 logical and the chip sits flush
+/// with the screen top.
 const MIN_CHIP_W: u32 = 160;
 const MIN_CHIP_H: u32 = 32;
 const MAX_CHIP_W: u32 = 640;
-const MAX_CHIP_H: u32 = 456;
+const MAX_CHIP_H: u32 = 480;
 
 impl Default for AppState {
     fn default() -> Self {
@@ -91,6 +94,7 @@ impl Default for AppState {
             settings_was_visible: AtomicBool::new(false),
             answer_width: AtomicU32::new(NotchState::Answer.pill_size().0 as u32),
             answer_height: AtomicU32::new(NotchState::Answer.pill_size().1 as u32),
+            concealed: AtomicBool::new(false),
         }
     }
 }
@@ -141,6 +145,14 @@ impl AppState {
         self.settings_was_visible.store(visible, Ordering::Relaxed);
     }
 
+    pub fn concealed(&self) -> bool {
+        self.concealed.load(Ordering::Relaxed)
+    }
+
+    pub fn set_concealed(&self, concealed: bool) {
+        self.concealed.store(concealed, Ordering::Relaxed);
+    }
+
     /// Size of the answer chip, in logical pixels.
     pub fn answer_size(&self) -> (f64, f64) {
         (
@@ -171,6 +183,7 @@ mod tests {
         assert_eq!(state.opacity(), MAX_OPACITY);
         assert_eq!(state.notch_state(), NotchState::Idle);
         assert!(!state.settings_was_visible());
+        assert!(!state.concealed());
     }
 
     #[test]

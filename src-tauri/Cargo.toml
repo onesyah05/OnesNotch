@@ -1,6 +1,6 @@
 [package]
 name = "notch"
-version = "0.1.1"
+version = "0.2.0"
 description = "Dynamic-Island-style overlay for Windows, hidden from screen capture"
 authors = ["Notch"]
 edition = "2024"
@@ -33,6 +33,8 @@ rusqlite = { version = "0.41", features = ["bundled"] }
 tauri-plugin-store = "2"
 keyring-core = "1"
 sysinfo = "0.38.4"
+tauri-plugin-autostart = "2"
+tauri-plugin-updater = "2"
 
 [target.'cfg(windows)'.dependencies]
 windows = { version = "0.62", features = [

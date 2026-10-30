@@ -1,10 +1,10 @@
 //! App and terminal runner commands.
 //! Launches saved terminal presets or background tasks safely without blocking the UI.
 
+use crate::error::{AppError, AppResult};
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
-use serde::{Deserialize, Serialize};
-use crate::error::{AppError, AppResult};
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -55,13 +55,19 @@ fn execute_command_sync(req: RunRequest) -> AppResult<RunResponse> {
         return Err(AppError::InvalidInput("Command cannot be empty".into()));
     }
 
-    let dir = req.directory.as_deref().map(str::trim).filter(|s| !s.is_empty());
+    let dir = req
+        .directory
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty());
 
     // Validate directory if provided
     if let Some(d) = dir {
         let p = Path::new(d);
         if !p.exists() {
-            return Err(AppError::InvalidInput(format!("Directory '{d}' does not exist")));
+            return Err(AppError::InvalidInput(format!(
+                "Directory '{d}' does not exist"
+            )));
         }
     }
 
@@ -82,9 +88,9 @@ fn execute_command_sync(req: RunRequest) -> AppResult<RunResponse> {
             }
             cmd.creation_flags(CREATE_NO_WINDOW);
 
-            let child = cmd
-                .spawn()
-                .map_err(|e| AppError::Internal(format!("Failed to start background process: {e}")))?;
+            let child = cmd.spawn().map_err(|e| {
+                AppError::Internal(format!("Failed to start background process: {e}"))
+            })?;
 
             let pid = child.id();
             return Ok(RunResponse {
@@ -172,7 +178,9 @@ fn stop_app_sync(req: StopRequest) -> AppResult<RunResponse> {
 
             if !output.status.success() {
                 let err_msg = String::from_utf8_lossy(&output.stderr);
-                return Err(AppError::Internal(format!("Stop command failed: {err_msg}")));
+                return Err(AppError::Internal(format!(
+                    "Stop command failed: {err_msg}"
+                )));
             }
 
             return Ok(RunResponse {
@@ -255,7 +263,9 @@ pub fn open_directory(directory: String) -> AppResult<()> {
 
     let path = Path::new(trimmed);
     if !path.exists() {
-        return Err(AppError::InvalidInput(format!("Directory '{trimmed}' does not exist")));
+        return Err(AppError::InvalidInput(format!(
+            "Directory '{trimmed}' does not exist"
+        )));
     }
 
     #[cfg(windows)]

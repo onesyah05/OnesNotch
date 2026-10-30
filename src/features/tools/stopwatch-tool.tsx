@@ -43,7 +43,7 @@ export function StopwatchTool() {
         <div className="flex items-baseline font-mono tracking-tight">
           <span
             className="text-5xl font-bold"
-            style={{ color: isRunning ? "var(--notch-accent, #22d3ee)" : "var(--color-fg)" }}
+            style={{ color: isRunning ? "var(--color-accent)" : "var(--color-fg)" }}
           >
             {formatted.time}
           </span>
@@ -52,7 +52,7 @@ export function StopwatchTool() {
       </div>
 
       {/* 2. Laps Table */}
-      <div className="my-2 flex-1 overflow-y-auto thin-scrollbar rounded-xl border border-white/5 bg-surface/30 p-2 min-h-[90px] max-h-[140px]">
+      <div className="my-2 flex-1 overflow-y-auto thin-scrollbar rounded-xl border border-fg/5 bg-surface/30 p-2 min-h-[90px] max-h-[140px]">
         {laps.length === 0 ? (
           <div className="flex h-full items-center justify-center text-xs text-muted">
             {t("tools.stopwatch.noLaps")}
@@ -73,7 +73,7 @@ export function StopwatchTool() {
                       ? "bg-ok/10 text-ok font-semibold"
                       : isSlowest
                         ? "bg-live/10 text-live"
-                        : "text-subtle hover:bg-white/5"
+                        : "text-subtle hover:bg-fg/5"
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
@@ -97,7 +97,7 @@ export function StopwatchTool() {
           onClick={reset}
           disabled={elapsedMs === 0 && !isRunning}
           title={t("tools.stopwatch.reset")}
-          className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg disabled:opacity-30 disabled:pointer-events-none active:scale-95 transition-all shadow-sm"
+          className="flex size-10 items-center justify-center rounded-full border border-fg/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg disabled:opacity-30 disabled:pointer-events-none active:scale-95 transition-all shadow-sm"
         >
           <RotateCcw className="size-4" />
         </button>
@@ -106,8 +106,8 @@ export function StopwatchTool() {
           type="button"
           onClick={isRunning ? pause : start}
           title={isRunning ? t("tools.stopwatch.pause") : t("tools.stopwatch.start")}
-          className="flex size-12 items-center justify-center rounded-full text-slate-950 font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
-          style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+          className="flex size-12 items-center justify-center rounded-full text-bg font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
+          style={{ backgroundColor: "var(--color-accent)" }}
         >
           {isRunning ? (
             <Pause className="size-5 fill-current" />
@@ -121,7 +121,7 @@ export function StopwatchTool() {
           onClick={lap}
           disabled={!isRunning}
           title={t("tools.stopwatch.lap")}
-          className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg disabled:opacity-30 disabled:pointer-events-none active:scale-95 transition-all shadow-sm"
+          className="flex size-10 items-center justify-center rounded-full border border-fg/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg disabled:opacity-30 disabled:pointer-events-none active:scale-95 transition-all shadow-sm"
         >
           <Flag className="size-4" />
         </button>

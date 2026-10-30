@@ -2,10 +2,12 @@
 //! `clipboard.rs` handles copy buttons; Phase 6 adds `battery.rs`
 //! (GetSystemPowerStatus, sysinfo) and the clipboard-history listener.
 
+pub(crate) mod autostart;
 pub(crate) mod clipboard;
 pub(crate) mod ports;
 pub(crate) mod runner;
 pub(crate) mod stats;
+pub(crate) mod updater;
 
 /// Windows build number (e.g. 26100). `WDA_EXCLUDEFROMCAPTURE` needs >= 19041.
 #[cfg(windows)]

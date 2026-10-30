@@ -205,7 +205,7 @@ function FollowUp({ disabled }: { disabled: boolean }) {
         placeholder={t("ai.followUp.placeholder")}
         maxLength={4000}
         disabled={sessionId === null}
-        className="h-8 min-w-0 flex-1 rounded-full glass-surface px-3.5 text-sm text-fg border border-white/[0.08] outline-none placeholder:text-muted focus:border-white/20 disabled:opacity-50"
+        className="h-8 min-w-0 flex-1 rounded-full glass-surface px-3.5 text-sm text-fg border border-fg/[0.08] outline-none placeholder:text-muted focus:border-fg/20 disabled:opacity-50"
       />
       <IconButton label={t("ai.followUp.send")} type="submit" disabled={blocked || !text.trim()}>
         <SendIcon />
@@ -286,7 +286,7 @@ function ActionChip({
         event.stopPropagation();
         onClick();
       }}
-      className="flex items-center gap-2 rounded-full glass-elevated px-3.5 py-1.5 text-xs text-fg transition-all hover:border-white/20"
+      className="flex items-center gap-2 rounded-full glass-elevated px-3.5 py-1.5 text-xs text-fg transition-all hover:border-fg/20"
     >
       {icon}
       {children}

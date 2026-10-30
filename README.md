@@ -43,6 +43,10 @@ Secara bawaan, OnesNotch **tidak terlihat saat layar Anda dibagikan, direkam, at
 - **Notch dapat disembunyikan** dari tangkapan layar (aktif/nonaktif).
 - **Transparansi** yang dapat diatur.
 
+### 🔄 Pembaruan Otomatis
+- Mengecek versi baru saat dibuka dan setiap 6 jam; notch menampilkan **Pembaruan tersedia** dengan tombol **Perbarui**.
+- Installer diunduh, tanda tangan digital diverifikasi, lalu dipasang dan aplikasi restart sendiri.
+
 ### ⚙️ Pengaturan Lengkap
 - Atur tampilan, tombol pintas (hotkey), penyedia AI, notifikasi, dan video.
 - Bahasa antarmuka: **Indonesia** dan **Inggris**.
@@ -104,6 +108,34 @@ npm run tauri build
 | `npm run check:rust` | Periksa kualitas kode Rust (fmt + clippy + test) |
 
 ---
+
+## Merilis Versi Baru
+
+Pengguna yang sudah memasang OnesNotch 0.2.0 ke atas akan otomatis diberi tahu saat ada versi baru. Langkah merilis:
+
+1. Naikkan versi di `package.json`, `src-tauri/tauri.conf.json`, dan `src-tauri/Cargo.toml` (ikuti [SemVer](https://semver.org/lang/id/): fitur baru → minor, perbaikan → patch).
+2. Tulis perubahan di `CHANGELOG.md` dengan judul `## [x.y.z] - YYYY-MM-DD`. Isi bagian ini menjadi catatan rilis yang tampil di aplikasi.
+3. Commit, lalu buat dan push tag yang sama dengan versinya:
+   ```bash
+   git tag v0.3.0
+   git push origin main v0.3.0
+   ```
+4. Workflow **Release** di GitHub Actions membangun installer, menandatanganinya, dan menerbitkan rilis beserta `latest.json`. Setelah selesai, aplikasi pengguna menemukan pembaruan dalam ≤ 6 jam (atau langsung lewat Settings → Tentang → Cek pembaruan).
+
+### Kunci tanda tangan (sekali saja)
+
+Pembaruan ditandatangani supaya aplikasi hanya memasang installer asli. Kunci publik sudah ada di `src-tauri/tauri.conf.json`; kunci privat **tidak boleh** masuk repo.
+
+- Kunci privat: `~/.tauri/onesnotch.key`. Simpan cadangannya di tempat aman (mis. password manager). Jika hilang, versi yang sudah terpasang tidak bisa menerima pembaruan lagi.
+- Tambahkan sebagai secret repository `TAURI_SIGNING_PRIVATE_KEY`:
+  ```bash
+  gh secret set TAURI_SIGNING_PRIVATE_KEY < ~/.tauri/onesnotch.key
+  ```
+- Build lokal dengan `npm run tauri build` juga butuh kunci ini:
+  ```powershell
+  $env:TAURI_SIGNING_PRIVATE_KEY = Get-Content -Raw "$HOME\.tauri\onesnotch.key"
+  npm run tauri build
+  ```
 
 ## Lisensi
 

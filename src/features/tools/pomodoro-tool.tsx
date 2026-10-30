@@ -40,7 +40,7 @@ export function PomodoroTool() {
   return (
     <div className="flex h-full flex-col items-center justify-between py-2 select-none">
       {/* 1. Mode Selector Tabs */}
-      <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-surface/50 p-1">
+      <div className="flex items-center gap-1.5 rounded-full border border-fg/10 bg-surface/50 p-1">
         {MODES.map((m) => {
           const Icon = m.icon;
           const isActive = mode === m.id;
@@ -51,7 +51,7 @@ export function PomodoroTool() {
               onClick={() => setMode(m.id)}
               className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all ${
                 isActive
-                  ? "bg-white/20 text-fg shadow-sm font-semibold border border-white/20"
+                  ? "bg-fg/20 text-fg shadow-sm font-semibold border border-fg/20"
                   : "text-muted hover:text-subtle"
               }`}
             >
@@ -73,10 +73,10 @@ export function PomodoroTool() {
               <span
                 key={step}
                 className={`size-2 rounded-full transition-all ${
-                  isCurrent ? "scale-125 shadow-sm" : isDone ? "opacity-80" : "bg-white/15"
+                  isCurrent ? "scale-125 shadow-sm" : isDone ? "opacity-80" : "bg-fg/15"
                 }`}
                 style={{
-                  backgroundColor: isCurrent || isDone ? "var(--notch-accent, #22d3ee)" : undefined,
+                  backgroundColor: isCurrent || isDone ? "var(--color-accent)" : undefined,
                 }}
               />
             );
@@ -89,18 +89,18 @@ export function PomodoroTool() {
         {/* Big Countdown */}
         <span
           className="font-mono text-5xl font-bold tracking-tight"
-          style={{ color: isRunning ? "var(--notch-accent, #22d3ee)" : "var(--color-fg)" }}
+          style={{ color: isRunning ? "var(--color-accent)" : "var(--color-fg)" }}
         >
           {formatSeconds(remainingSeconds)}
         </span>
 
         {/* Progress Bar */}
-        <div className="mt-3 h-1.5 w-44 rounded-full bg-white/10 overflow-hidden">
+        <div className="mt-3 h-1.5 w-44 rounded-full bg-fg/10 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
               width: `${progress}%`,
-              backgroundColor: "var(--notch-accent, #22d3ee)",
+              backgroundColor: "var(--color-accent)",
             }}
           />
         </div>
@@ -113,7 +113,7 @@ export function PomodoroTool() {
             type="button"
             onClick={reset}
             title={t("tools.pomodoro.reset")}
-            className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
+            className="flex size-9 items-center justify-center rounded-full border border-fg/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
           >
             <RotateCcw className="size-4" />
           </button>
@@ -122,8 +122,8 @@ export function PomodoroTool() {
             type="button"
             onClick={isRunning ? pause : start}
             title={isRunning ? t("tools.pomodoro.pause") : t("tools.pomodoro.start")}
-            className="flex size-12 items-center justify-center rounded-full text-slate-950 font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
-            style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+            className="flex size-12 items-center justify-center rounded-full text-bg font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
+            style={{ backgroundColor: "var(--color-accent)" }}
           >
             {isRunning ? (
               <Pause className="size-5 fill-current" />
@@ -136,7 +136,7 @@ export function PomodoroTool() {
             type="button"
             onClick={skip}
             title={t("tools.pomodoro.skip")}
-            className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
+            className="flex size-9 items-center justify-center rounded-full border border-fg/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
           >
             <SkipForward className="size-4" />
           </button>

@@ -79,7 +79,7 @@ export function NotificationPill({
 
       {/* Action buttons */}
       <div className="flex items-center gap-2 shrink-0 pl-1">
-        <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-subtle/80 group-hover:text-fg transition-colors bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full ring-1 ring-white/10">
+        <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-medium text-subtle/80 group-hover:text-fg transition-colors bg-fg/5 hover:bg-fg/10 px-3 py-1 rounded-full ring-1 ring-fg/10">
           {t("notifications.open", "Buka")}
           <ExternalArrowIcon />
         </span>
@@ -88,7 +88,7 @@ export function NotificationPill({
           type="button"
           onClick={handleDismissClick}
           aria-label={t("notifications.dismiss", "Tutup")}
-          className="flex size-7 items-center justify-center rounded-full text-muted hover:bg-white/10 hover:text-fg transition-colors"
+          className="flex size-7 items-center justify-center rounded-full text-muted hover:bg-fg/10 hover:text-fg transition-colors"
         >
           <CloseIcon />
         </button>
@@ -100,7 +100,7 @@ export function NotificationPill({
           initial={{ width: "100%" }}
           animate={{ width: "0%" }}
           transition={{ duration: autoDismissSeconds, ease: "linear" }}
-          className="absolute bottom-1.5 left-6 right-6 h-[2px] rounded-full bg-cyan-400/50"
+          className="absolute bottom-1.5 left-6 right-6 h-[2px] rounded-full bg-accent/50"
         />
       )}
     </motion.div>

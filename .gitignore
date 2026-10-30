@@ -29,6 +29,8 @@ src-tauri/gen/schemas
 
 # Env / secrets
 .env*
+# Updater signing keys must never be committed
+*.key
 
 # AI agent files (not part of the project)
 AGENTS.md

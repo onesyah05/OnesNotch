@@ -42,9 +42,9 @@ export function MusicPanel() {
     return (
       <div className="flex h-full flex-col items-center justify-center p-6 text-center select-none">
         {/* Animated Vinyl Icon */}
-        <div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-gradient-to-tr from-surface to-elevated p-2 shadow-glass ring-1 ring-white/10">
-          <div className="size-full rounded-full border border-dashed border-white/20 flex items-center justify-center">
-            <div className="size-5 rounded-full bg-elevated ring-1 ring-white/20" />
+        <div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-gradient-to-tr from-surface to-elevated p-2 shadow-glass ring-1 ring-fg/10">
+          <div className="size-full rounded-full border border-dashed border-fg/20 flex items-center justify-center">
+            <div className="size-5 rounded-full bg-elevated ring-1 ring-fg/20" />
           </div>
         </div>
 
@@ -63,7 +63,7 @@ export function MusicPanel() {
           {["Spotify", "YouTube", "Chrome", "Edge"].map((app) => (
             <div
               key={app}
-              className="flex items-center gap-1.5 rounded-full bg-surface/70 px-2.5 py-1 text-[11px] text-subtle ring-1 ring-white/5"
+              className="flex items-center gap-1.5 rounded-full bg-surface/70 px-2.5 py-1 text-[11px] text-subtle ring-1 ring-fg/5"
             >
               <AppIcon appName={app} size={13} />
               <span>{app}</span>
@@ -78,7 +78,7 @@ export function MusicPanel() {
             e.stopPropagation();
             simulateTrack();
           }}
-          className="mt-5 rounded-full glass-elevated px-4 py-1.5 text-xs font-medium text-fg hover:border-white/25 active:scale-95 transition-all shadow-sm"
+          className="mt-5 rounded-full glass-elevated px-4 py-1.5 text-xs font-medium text-fg hover:border-fg/25 active:scale-95 transition-all shadow-sm"
         >
           + {t("music.simulate", "Coba Putar Lagu Contoh")}
         </button>
@@ -90,7 +90,7 @@ export function MusicPanel() {
     <div className="flex h-full flex-col justify-between p-4 select-none">
       {/* Top Header: App badge & Equalizer */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 rounded-full bg-surface/70 px-3 py-1 ring-1 ring-white/10">
+        <div className="flex items-center gap-2 rounded-full bg-surface/70 px-3 py-1 ring-1 ring-fg/10">
           <AppIcon appName={media.appName || "Music"} size={16} />
           <span className="text-[11px] font-medium text-fg/90">
             {media.appName || t("music.nowPlaying", "Sedang Diputar")}
@@ -121,7 +121,7 @@ export function MusicPanel() {
                     }
                   : {}
               }
-              className="w-1 rounded-full bg-cyan-400/80"
+              className="w-1 rounded-full bg-accent/80"
             />
           ))}
         </div>
@@ -130,7 +130,7 @@ export function MusicPanel() {
       {/* Main Track Info + Artwork */}
       <div className="my-auto flex items-center gap-4 py-2">
         {/* Album Artwork */}
-        <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-surface/80 shadow-glass ring-1 ring-white/15">
+        <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-surface/80 shadow-glass ring-1 ring-fg/15">
           {media.coverUrl ? (
             <img src={media.coverUrl} alt={media.title} className="size-full object-cover" />
           ) : (
@@ -172,9 +172,9 @@ export function MusicPanel() {
         <div className="space-y-1">
           <div className="relative flex items-center h-4 group">
             {/* Background track */}
-            <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+            <div className="h-1.5 w-full rounded-full bg-fg/10 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-cyan-400 to-indigo-400 rounded-full"
+                className="h-full bg-gradient-to-r from-accent to-accent/60 rounded-full"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -228,7 +228,7 @@ export function MusicPanel() {
               value={media.isMuted ? 0 : Math.round(media.volume * 100)}
               onChange={handleVolumeChange}
               onClick={(e) => e.stopPropagation()}
-              className="w-full h-1 bg-white/15 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+              className="w-full h-1 bg-fg/15 rounded-lg appearance-none cursor-pointer accent-accent"
             />
           </div>
 
@@ -241,7 +241,7 @@ export function MusicPanel() {
                 e.stopPropagation();
                 void previous();
               }}
-              aria-label="Previous Track"
+              aria-label={t("music.previous")}
               className="flex size-9 items-center justify-center rounded-full glass-surface text-muted hover:text-fg hover:bg-elevated transition-all active:scale-95"
             >
               <PrevIcon />
@@ -255,7 +255,7 @@ export function MusicPanel() {
                 void togglePlayPause();
               }}
               aria-label={media.isPlaying ? "Pause" : "Play"}
-              className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-slate-950 shadow-glass-card hover:brightness-110 active:scale-90 transition-all font-bold"
+              className="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent/60 text-bg shadow-glass-card hover:brightness-110 active:scale-90 transition-all font-bold"
             >
               {media.isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
@@ -267,7 +267,7 @@ export function MusicPanel() {
                 e.stopPropagation();
                 void next();
               }}
-              aria-label="Next Track"
+              aria-label={t("music.next")}
               className="flex size-9 items-center justify-center rounded-full glass-surface text-muted hover:text-fg hover:bg-elevated transition-all active:scale-95"
             >
               <NextIcon />

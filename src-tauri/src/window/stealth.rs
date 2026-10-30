@@ -9,10 +9,16 @@ use tauri::{AppHandle, Manager, Runtime, WebviewWindow};
 use crate::error::AppResult;
 
 /// Hides a window from screen capture and from the taskbar/Alt-Tab list.
+///
+/// "Visible in capture" only ever applies to windows that are on screen. A
+/// hidden window that loses `WDA_EXCLUDEFROMCAPTURE` still turns up in
+/// screenshots as a blank white frame, so hidden windows always stay excluded;
+/// [`hide`] and the show paths re-apply this whenever visibility changes.
 pub(crate) fn apply<R: Runtime>(
     window: &WebviewWindow<R>,
     visible_in_capture: bool,
 ) -> AppResult<()> {
+    let visible_in_capture = visible_in_capture && window.is_visible().unwrap_or(false);
     #[cfg(windows)]
     {
         windows_impl::apply(window, visible_in_capture)
@@ -22,6 +28,15 @@ pub(crate) fn apply<R: Runtime>(
         let _ = (window, visible_in_capture);
         Ok(())
     }
+}
+
+/// Hides a window and puts it back under capture exclusion (see [`apply`]).
+pub(crate) fn hide<R: Runtime>(window: &WebviewWindow<R>) -> tauri::Result<()> {
+    window.hide()?;
+    if let Err(err) = apply(window, false) {
+        tracing::error!("failed to re-apply stealth to hidden window: {err}");
+    }
+    Ok(())
 }
 
 /// Applies stealth to every existing window.

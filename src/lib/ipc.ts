@@ -118,6 +118,42 @@ export interface ThemeSettings {
   accentColor: string;
 }
 
+/** Mirrors `AutoHideSettings` in src-tauri/src/storage/settings.rs. */
+export interface AutoHideSettings {
+  enabled: boolean;
+  /** How often the notch drops in on its own, in seconds (30-3600). */
+  intervalSeconds: number;
+  /** How long each automatic appearance lasts, in seconds (2-60). */
+  showSeconds: number;
+}
+
+/** Mirrors `WaterSettings` in src-tauri/src/storage/settings.rs. */
+export interface WaterSettings {
+  enabled: boolean;
+  weightKg: number;
+  /** Local start of the 12-hour reminder window, `HH:MM`. */
+  startTime: string;
+  glassMl: number;
+}
+
+/** Mirrors `UpdateSettings` in src-tauri/src/storage/settings.rs. */
+export interface UpdateSettings {
+  autoCheck: boolean;
+}
+
+/** Mirrors `UpdateInfo` in src-tauri/src/system/updater.rs. */
+export interface UpdateInfo {
+  version: string;
+  currentVersion: string;
+  notes: string | null;
+  /** Publish date, Unix milliseconds. */
+  dateMs: number | null;
+}
+
+/** Mirrors `UpdateEvent` in src-tauri/src/system/updater.rs. */
+export type UpdateEvent =
+  { type: "progress"; downloaded: number; total: number | null } | { type: "installing" };
+
 /** Mirrors `SettingsView` in src-tauri/src/commands.rs. */
 export interface SettingsView {
   provider: ProviderId;
@@ -129,6 +165,10 @@ export interface SettingsView {
   opacity: number;
   notifications: NotificationSettings;
   theme: ThemeSettings;
+  autostart: boolean;
+  autoHide: AutoHideSettings;
+  water: WaterSettings;
+  updates: UpdateSettings;
 }
 
 /** Mirrors `SettingsPatch` in src-tauri/src/commands.rs. */
@@ -222,6 +262,8 @@ export const ipc = {
   /** Reports the measured answer-chip size so click-through follows it. */
   setAnswerSize: (width: number, height: number) =>
     invoke<void>("set_answer_size", { width, height }),
+  /** Tells the hover thread the pill is tucked away by auto-hide. */
+  setConcealed: (concealed: boolean) => invoke<void>("set_concealed", { concealed }),
   setVisibleInCapture: (visible: boolean) => invoke<void>("set_visible_in_capture", { visible }),
   setOpacity: (opacity: number) => invoke<number>("set_opacity", { opacity }),
   showSettings: () => invoke<void>("show_settings"),
@@ -250,6 +292,17 @@ export const ipc = {
     invoke<SettingsView>("provider_set_key", { id, key }),
   providerDeleteKey: (id: ProviderId) => invoke<SettingsView>("provider_delete_key", { id }),
   providerTest: (id: ProviderId) => invoke<string[]>("provider_test", { id }),
+  autostartSet: (enabled: boolean) => invoke<SettingsView>("autostart_set", { enabled }),
+  autoHideUpdate: (settings: AutoHideSettings) =>
+    invoke<SettingsView>("auto_hide_update", { settings }),
+  waterUpdate: (settings: WaterSettings) => invoke<SettingsView>("water_update", { settings }),
+  updateStatus: () => invoke<UpdateInfo | null>("update_status"),
+  updateCheck: () => invoke<UpdateInfo | null>("update_check"),
+  /** Downloads, verifies and runs the installer; the app closes when it starts. */
+  updateInstall: (onEvent: (event: UpdateEvent) => void) =>
+    invoke<void>("update_install", { onEvent: new Channel<UpdateEvent>(onEvent) }),
+  updateSetAutoCheck: (enabled: boolean) =>
+    invoke<SettingsView>("update_set_auto_check", { enabled }),
   hotkeySet: (action: HotkeyAction, accelerator: string) =>
     invoke<SettingsView>("hotkey_set", { action, accelerator }),
   hotkeysSuspend: (suspended: boolean) => invoke<void>("hotkeys_suspend", { suspended }),
@@ -294,8 +347,7 @@ export const ipc = {
   videoPickFiles: () => invoke<string[]>("video_pick_files"),
   captureScreenBase64: (target?: CaptureTarget) =>
     invoke<string>("capture_screen_base64", { target }),
-  openUrlOrSearch: (query: string) =>
-    invoke<boolean>("open_url_or_search", { query }),
+  openUrlOrSearch: (query: string) => invoke<boolean>("open_url_or_search", { query }),
 };
 
 export interface RunRequest {
@@ -375,6 +427,8 @@ export const events = {
     listen<AppNotification[]>("notification://updated", (event) => handler(event.payload)),
   mediaChanged: (handler: (payload: MediaState) => void): Promise<UnlistenFn> =>
     listen<MediaState>("media://changed", (event) => handler(event.payload)),
+  updateAvailable: (handler: (payload: UpdateInfo) => void): Promise<UnlistenFn> =>
+    listen<UpdateInfo>("update://available", (event) => handler(event.payload)),
   clipboardChanged: (handler: (payload: ClipboardItem) => void): Promise<UnlistenFn> =>
     listen<ClipboardItem>("clipboard://changed", (event) => handler(event.payload)),
 };

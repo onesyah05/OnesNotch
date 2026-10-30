@@ -78,21 +78,21 @@ export function AppearanceSection() {
       <SectionTitle title={t("settings.appearance.title")} />
 
       {/* 1. Live Mini Notch Preview */}
-      <div className="flex flex-col gap-2 rounded-2xl glass-surface p-4 border border-white/10">
+      <div className="flex flex-col gap-2 rounded-2xl glass-surface p-4 border border-fg/10">
         <div className="flex items-center justify-between text-xs text-subtle font-medium">
           <span>{t("settings.appearance.preview")}</span>
           <span className="text-[11px] text-muted">{t("settings.appearance.previewSubtitle")}</span>
         </div>
 
-        <div className="relative flex h-28 items-center justify-center rounded-xl bg-black/40 p-4 overflow-hidden border border-white/5">
+        <div className="relative flex h-28 items-center justify-center rounded-xl bg-black/40 p-4 overflow-hidden border border-fg/5">
           {/* Simulated Mini Notch Pill */}
           <div
-            className="relative flex h-9 w-72 max-w-full items-center justify-between px-3 rounded-full border border-white/15 shadow-notch transition-colors duration-200"
+            className="relative flex h-9 w-72 max-w-full items-center justify-between px-3 rounded-full border border-fg/15 shadow-notch transition-colors duration-200"
             style={{ backgroundColor: theme.backgroundColor || DEFAULT_THEME.backgroundColor }}
           >
             {/* Left: Music info */}
             <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-              <div className="size-5 rounded-md bg-white/10 flex items-center justify-center shrink-0">
+              <div className="size-5 rounded-md bg-fg/10 flex items-center justify-center shrink-0">
                 <svg className="size-3 text-fg opacity-85" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
                 </svg>
@@ -132,7 +132,7 @@ export function AppearanceSection() {
             </div>
 
             {/* Bottom Progress Bar */}
-            <div className="absolute inset-x-5 bottom-0.5 h-[2px] rounded-full bg-white/10 overflow-hidden">
+            <div className="absolute inset-x-5 bottom-0.5 h-[2px] rounded-full bg-fg/10 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-200"
                 style={{
@@ -146,14 +146,14 @@ export function AppearanceSection() {
       </div>
 
       {/* 2. Accent & Rhythm Color */}
-      <div className="flex flex-col gap-3 rounded-2xl glass-surface p-4 border border-white/10">
+      <div className="flex flex-col gap-3 rounded-2xl glass-surface p-4 border border-fg/10">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-fg">
               {t("settings.appearance.accentColor")}
             </span>
             {theme.accentColor.toLowerCase() === DEFAULT_THEME.accentColor.toLowerCase() && (
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-subtle">
+              <span className="rounded-full bg-fg/10 px-2 py-0.5 text-[10px] font-medium text-subtle">
                 {t("settings.appearance.defaultBadge")}
               </span>
             )}
@@ -176,8 +176,8 @@ export function AppearanceSection() {
                 title={`${preset.name} (${preset.value})`}
                 className={`relative flex size-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${
                   isSelected
-                    ? "ring-2 ring-white ring-offset-2 ring-offset-[#111522] scale-105 shadow-md"
-                    : "border border-white/20 hover:border-white/50"
+                    ? "ring-2 ring-fg ring-offset-2 ring-offset-[#111522] scale-105 shadow-md"
+                    : "border border-fg/20 hover:border-fg/50"
                 }`}
                 style={{ backgroundColor: preset.value }}
               >
@@ -202,10 +202,10 @@ export function AppearanceSection() {
           {/* Native Color Picker Trigger */}
           <label
             title={t("settings.appearance.pickColor")}
-            className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-surface/70 px-3 py-1.5 cursor-pointer hover:bg-surface hover:border-white/30 transition-all text-xs font-medium text-fg shadow-sm"
+            className="flex items-center gap-2.5 rounded-xl border border-fg/15 bg-surface/70 px-3 py-1.5 cursor-pointer hover:bg-surface hover:border-fg/30 transition-all text-xs font-medium text-fg shadow-sm"
           >
             <span
-              className="size-5 rounded-md border border-white/25 shadow-inner"
+              className="size-5 rounded-md border border-fg/25 shadow-inner"
               style={{ backgroundColor: theme.accentColor }}
             />
             <span>{t("settings.appearance.pickColor")}</span>
@@ -218,7 +218,7 @@ export function AppearanceSection() {
           </label>
 
           {/* HEX Text Input */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-white/15 bg-surface/50 px-2.5 py-1.5">
+          <div className="flex items-center gap-1.5 rounded-xl border border-fg/15 bg-surface/50 px-2.5 py-1.5">
             <span className="text-xs font-mono text-muted">#</span>
             <input
               type="text"
@@ -233,7 +233,7 @@ export function AppearanceSection() {
       </div>
 
       {/* 3. Notch Background Color */}
-      <div className="flex flex-col gap-3 rounded-2xl glass-surface p-4 border border-white/10">
+      <div className="flex flex-col gap-3 rounded-2xl glass-surface p-4 border border-fg/10">
         <div>
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-fg">
@@ -241,7 +241,7 @@ export function AppearanceSection() {
             </span>
             {theme.backgroundColor.toLowerCase() ===
               DEFAULT_THEME.backgroundColor.toLowerCase() && (
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-subtle">
+              <span className="rounded-full bg-fg/10 px-2 py-0.5 text-[10px] font-medium text-subtle">
                 {t("settings.appearance.defaultBadge")}
               </span>
             )}
@@ -264,14 +264,14 @@ export function AppearanceSection() {
                 title={`${preset.name} (${preset.value})`}
                 className={`relative flex size-8 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ${
                   isSelected
-                    ? "ring-2 ring-white ring-offset-2 ring-offset-[#111522] scale-105 shadow-md"
-                    : "border border-white/20 hover:border-white/50"
+                    ? "ring-2 ring-fg ring-offset-2 ring-offset-[#111522] scale-105 shadow-md"
+                    : "border border-fg/20 hover:border-fg/50"
                 }`}
                 style={{ backgroundColor: preset.value }}
               >
                 {isSelected && (
                   <svg
-                    className="size-3.5 text-white drop-shadow"
+                    className="size-3.5 text-fg drop-shadow"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -290,10 +290,10 @@ export function AppearanceSection() {
           {/* Native Color Picker Trigger */}
           <label
             title={t("settings.appearance.pickColor")}
-            className="flex items-center gap-2.5 rounded-xl border border-white/15 bg-surface/70 px-3 py-1.5 cursor-pointer hover:bg-surface hover:border-white/30 transition-all text-xs font-medium text-fg shadow-sm"
+            className="flex items-center gap-2.5 rounded-xl border border-fg/15 bg-surface/70 px-3 py-1.5 cursor-pointer hover:bg-surface hover:border-fg/30 transition-all text-xs font-medium text-fg shadow-sm"
           >
             <span
-              className="size-5 rounded-md border border-white/25 shadow-inner"
+              className="size-5 rounded-md border border-fg/25 shadow-inner"
               style={{ backgroundColor: theme.backgroundColor }}
             />
             <span>{t("settings.appearance.pickColor")}</span>
@@ -306,7 +306,7 @@ export function AppearanceSection() {
           </label>
 
           {/* HEX Text Input */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-white/15 bg-surface/50 px-2.5 py-1.5">
+          <div className="flex items-center gap-1.5 rounded-xl border border-fg/15 bg-surface/50 px-2.5 py-1.5">
             <span className="text-xs font-mono text-muted">#</span>
             <input
               type="text"
@@ -322,7 +322,7 @@ export function AppearanceSection() {
 
       {/* 4. Reset to Default Button */}
       {!isDefaultTheme && (
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-surface/40 p-3">
+        <div className="flex items-center justify-between rounded-xl border border-fg/10 bg-surface/40 p-3">
           <span className="text-xs text-subtle">{t("settings.appearance.resetDefaults")}</span>
           <button
             type="button"
@@ -331,7 +331,7 @@ export function AppearanceSection() {
               setAccentInput(DEFAULT_THEME.accentColor);
               void resetDefaults();
             }}
-            className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-surface px-3 py-1.5 text-xs font-medium text-fg hover:bg-elevated hover:border-white/25 active:scale-95 transition-all shadow-sm"
+            className="flex items-center gap-1.5 rounded-lg border border-fg/15 bg-surface px-3 py-1.5 text-xs font-medium text-fg hover:bg-elevated hover:border-fg/25 active:scale-95 transition-all shadow-sm"
           >
             <svg
               className="size-3.5 text-subtle"
@@ -352,7 +352,7 @@ export function AppearanceSection() {
       )}
 
       {/* 5. Opacity Slider */}
-      <div className="flex flex-col gap-2 rounded-2xl glass-surface p-4 border border-white/10">
+      <div className="flex flex-col gap-2 rounded-2xl glass-surface p-4 border border-fg/10">
         <label className="flex flex-col gap-2 text-sm">
           <span className="flex items-center justify-between">
             <span className="font-semibold text-fg">{t("settings.appearance.opacity")}</span>
@@ -364,7 +364,7 @@ export function AppearanceSection() {
             max={100}
             value={opacity}
             onChange={(event) => changeOpacity(Number(event.target.value))}
-            className="accent-cyan-400 cursor-pointer"
+            className="accent-accent cursor-pointer"
           />
         </label>
         <p className="text-xs text-muted">{t("settings.appearance.opacityHint")}</p>

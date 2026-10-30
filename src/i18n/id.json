@@ -8,7 +8,10 @@
     "visibleInCapture": "Terlihat di rekaman",
     "openSettings": "Buka pengaturan",
     "toggleCapture": "Ubah visibilitas di rekaman",
-    "collapse": "Kecilkan"
+    "collapse": "Kecilkan",
+    "charging": "Mengisi daya",
+    "acPower": "Daya AC",
+    "optimal": "Optimal"
   },
   "tabs": {
     "ai": "AI",
@@ -30,7 +33,8 @@
       "done": "Selesai",
       "doneIn": "Dijawab dalam {{seconds}} dtk",
       "cancelled": "Dibatalkan",
-      "error": "Gagal"
+      "error": "Gagal",
+      "answering": "Menjawab…"
     },
     "you": "Kamu",
     "actions": {
@@ -44,7 +48,8 @@
     "followUp": {
       "placeholder": "Tanya lanjutan soal tangkapan layar…",
       "send": "Kirim"
-    }
+    },
+    "title": "Jawaban AI"
   },
   "providers": {
     "anthropic": "Anthropic (Claude)",
@@ -70,7 +75,8 @@
     "invalid_input": "Nilai itu tidak valid.",
     "hotkey_unavailable": "Pintasan itu sudah dipakai aplikasi lain.",
     "storage": "Penyimpanan lokal gagal.",
-    "internal": "Terjadi kesalahan."
+    "internal": "Terjadi kesalahan.",
+    "update_failed": "Gagal memperbarui. Periksa koneksi lalu coba lagi."
   },
   "settings": {
     "title": "Pengaturan",
@@ -80,7 +86,9 @@
       "notifications": "Notifikasi",
       "appearance": "Tampilan",
       "hotkeys": "Pintasan",
-      "about": "Tentang"
+      "about": "Tentang",
+      "general": "Umum",
+      "water": "Pengingat minum"
     },
     "stealth": {
       "title": "Visibilitas rekaman",
@@ -181,6 +189,36 @@
       "testTitle": "Uji Coba Notifikasi",
       "testDesc": "Kirim notifikasi simulasi untuk menguji tampilan pill di layar atas.",
       "sendTest": "Kirim Notifikasi"
+    },
+    "general": {
+      "title": "Umum",
+      "description": "Cara OnesNotch berjalan dan kapan notch muncul.",
+      "autostart": "Jalankan saat Windows menyala",
+      "autostartHint": "Buka OnesNotch otomatis saat Anda masuk ke Windows.",
+      "autoHide": "Sembunyikan otomatis",
+      "autoHideHint": "Notch disembunyikan di atas layar. Notch turun saat ada notifikasi, video, pengingat, timer, atau saat kursor diarahkan ke tepi atas layar.",
+      "interval": "Muncul setiap",
+      "intervalHint": "Saat tersembunyi, notch muncul sebentar setiap interval ini.",
+      "showFor": "Tampil selama",
+      "showForHint": "Lama notch tampil setiap kali muncul otomatis."
+    },
+    "water": {
+      "title": "Pengingat minum",
+      "description": "Mengingatkan Anda minum sepanjang hari. Target harian = berat badan × 30 ml, dibagi dalam 12 jam.",
+      "enable": "Pengingat minum",
+      "enableHint": "Pengingat tetap tampil di notch sampai Anda klik Minum.",
+      "goal": "Target harian",
+      "formula": "{{weight}} kg × 30 ml = {{target}} ml",
+      "today": "Hari ini",
+      "weight": "Berat badan",
+      "weightHint": "Dipakai untuk menghitung target harian.",
+      "startTime": "Jam mulai",
+      "window": "Pengingat aktif {{start}}–{{end}} ({{hours}} jam).",
+      "glass": "Ukuran gelas",
+      "schedule": "{{count}} kali pengingat, sekitar setiap {{minutes}} menit.",
+      "reset": "Progres hari ini",
+      "resetHint": "Mulai hitungan hari ini dari nol.",
+      "resetButton": "Reset hari ini"
     }
   },
   "notifications": {
@@ -223,7 +261,12 @@
   },
   "common": {
     "add": "Tambah",
-    "seconds": "detik"
+    "seconds": "detik",
+    "close": "Tutup",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "reset": "Reset",
+    "minutes": "menit"
   },
   "tools": {
     "title": "Alat Bantu",
@@ -243,7 +286,10 @@
       "ready": "Siap",
       "completed": "Waktu Habis!",
       "portsCount": "{{count}} Port",
-      "appsCount": "{{count}} Apps"
+      "appsCount": "{{count}} Apps",
+      "focus": "Fokus",
+      "break": "Istirahat",
+      "session": "25m · Sesi {{cycle}}/4"
     },
     "nav": {
       "clipboard": "Clipboard",
@@ -252,7 +298,8 @@
       "pomodoro": "Pomodoro",
       "ports": "List Port",
       "runner": "Terminal Apps",
-      "scanner": "QR & Barcode"
+      "scanner": "QR & Barcode",
+      "water": "Minum air"
     },
     "clipboard": {
       "searchPlaceholder": "Cari riwayat clipboard...",
@@ -272,7 +319,8 @@
       "pause": "Jeda",
       "reset": "Reset",
       "completed": "Waktu Habis!",
-      "custom": "Atur Waktu"
+      "custom": "Atur Waktu",
+      "addMinute": "+1 menit"
     },
     "stopwatch": {
       "start": "Mulai",
@@ -331,7 +379,10 @@
       "copy": "Salin Command",
       "copied": "Tersalin!",
       "edit": "Edit Shortcut",
-      "delete": "Hapus Shortcut"
+      "delete": "Hapus Shortcut",
+      "copyStart": "Salin command start",
+      "copyStop": "Salin command stop",
+      "runNow": "Jalankan command sekarang"
     },
     "scanner": {
       "title": "QR & Barcode Scanner",
@@ -354,7 +405,82 @@
       "noCodeFound": "Tidak ditemukan QR Code atau Barcode yang jelas pada gambar.",
       "openedUrl": "Link otomatis dibuka di browser!",
       "searchedQuery": "Pencarian barcode dibuka di browser!",
-      "scannedSuccess": "Barcode berhasil dipindai!"
-    }
+      "scannedSuccess": "Barcode berhasil dipindai!",
+      "screen": "Layar",
+      "captureFailed": "Gagal mengambil tangkapan layar untuk pemindaian.",
+      "cameraError": "Gagal mengakses kamera atau izin ditolak."
+    },
+    "reorderHint": "Geser kartu atau klik panah untuk mengatur posisi",
+    "resetOrder": "Kembalikan urutan bawaan",
+    "count": "{{count}} tools",
+    "moveLeft": "Geser ke kiri",
+    "moveRight": "Geser ke kanan"
+  },
+  "water": {
+    "reminderTitle": "Waktunya minum air",
+    "reminderBody": "{{glass}} ml · {{consumed}} / {{target}} ml hari ini",
+    "drink": "Minum",
+    "later": "Nanti",
+    "glasses_one": "{{count}} gelas hari ini",
+    "glasses_other": "{{count}} gelas hari ini",
+    "off": "Pengingat nonaktif",
+    "goalReached": "Target harian tercapai 🎉",
+    "nextAt": "Pengingat berikutnya pukul {{time}}",
+    "addGlass": "+{{ml}} ml",
+    "openSettings": "Pengaturan pengingat"
+  },
+  "video": {
+    "active": "Aktif",
+    "interval": "Interval putar (detik)",
+    "intervalHint": "Setiap {{seconds}} detik, satu video acak diputar di notch.",
+    "duration": "Durasi tampil (detik)",
+    "full": "Penuh",
+    "durationFullHint": "Video diputar sampai habis, lalu kembali ke jam.",
+    "durationHint": "Tampil selama {{seconds}} detik, lalu kembali ke jam.",
+    "muted": "Tanpa suara",
+    "sound": "Suara aktif",
+    "format": "Format:",
+    "cover": "Penuh (cover)",
+    "contain": "Proporsional (contain)",
+    "list_one": "Koleksi video ({{count}})",
+    "list_other": "Koleksi video ({{count}})",
+    "listHint": "acak setiap {{seconds}} detik",
+    "picking": "Membuka…",
+    "pick": "Pilih file MP4",
+    "demoHint": "Tambahkan klip contoh bawaan",
+    "demo": "+ Klip demo",
+    "manual": "Tambah lewat URL atau path file",
+    "clearAll": "Hapus semua video",
+    "namePlaceholder": "Nama video (opsional)",
+    "pathPlaceholder": "Path file (C:\\...) atau URL (https://...mp4)",
+    "empty": "Belum ada video MP4",
+    "emptyHint": "Pilih satu atau beberapa file MP4 dari komputer Anda, atau tambahkan klip demo untuk mencoba.",
+    "playing": "Sedang tayang",
+    "stopHint": "Hentikan tayangan di notch",
+    "stop": "Stop",
+    "testHint": "Putar di notch sekarang",
+    "test": "Coba",
+    "remove": "Hapus video ini",
+    "info": "Video diputar acak saat notch idle. Arahkan kursor ke notch saat video tayang untuk melihat judul dan tombol suara.",
+    "errorDenied": "Format atau akses video ditolak",
+    "errorLoad": "Gagal memuat file",
+    "errorCodec": "Codec video tidak didukung"
+  },
+  "update": {
+    "title": "Pembaruan",
+    "available": "Pembaruan tersedia · v{{version}}",
+    "availableHint": "Versi {{version}} sudah tersedia (versi Anda {{current}}).",
+    "current": "Versi Anda v{{version}}. Memperbarui akan me-restart OnesNotch.",
+    "upToDate": "Anda sudah memakai versi terbaru ({{version}}).",
+    "check": "Cek pembaruan",
+    "checking": "Mengecek…",
+    "install": "Perbarui",
+    "installVersion": "Pasang v{{version}}",
+    "later": "Nanti",
+    "downloading": "Mengunduh pembaruan… {{percent}}%",
+    "installing": "Memasang… OnesNotch akan restart",
+    "notes": "Yang baru di v{{version}}",
+    "auto": "Cek otomatis",
+    "autoHint": "Dicek saat aplikasi dibuka dan setiap 6 jam. Pembaruan ditandatangani dan diverifikasi sebelum dipasang."
   }
 }

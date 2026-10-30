@@ -8,7 +8,10 @@
     "visibleInCapture": "Visible in capture",
     "openSettings": "Open settings",
     "toggleCapture": "Toggle visibility in capture",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "charging": "Charging",
+    "acPower": "AC power",
+    "optimal": "Optimal"
   },
   "tabs": {
     "ai": "AI",
@@ -30,7 +33,8 @@
       "done": "Done",
       "doneIn": "Answered in {{seconds}} s",
       "cancelled": "Cancelled",
-      "error": "Failed"
+      "error": "Failed",
+      "answering": "Answering…"
     },
     "you": "You",
     "actions": {
@@ -44,7 +48,8 @@
     "followUp": {
       "placeholder": "Ask a follow-up about the screenshot…",
       "send": "Send"
-    }
+    },
+    "title": "AI answer"
   },
   "providers": {
     "anthropic": "Anthropic (Claude)",
@@ -70,7 +75,8 @@
     "invalid_input": "That value is not valid.",
     "hotkey_unavailable": "That hotkey is already used by another app.",
     "storage": "Local storage failed.",
-    "internal": "Something went wrong."
+    "internal": "Something went wrong.",
+    "update_failed": "Could not update. Check your connection and try again."
   },
   "settings": {
     "title": "Settings",
@@ -80,7 +86,9 @@
       "notifications": "Notifications",
       "appearance": "Appearance",
       "hotkeys": "Hotkeys",
-      "about": "About"
+      "about": "About",
+      "general": "General",
+      "water": "Drink reminder"
     },
     "stealth": {
       "title": "Capture visibility",
@@ -181,6 +189,36 @@
       "testTitle": "Test Notification",
       "testDesc": "Send a simulated notification to test top pill behavior.",
       "sendTest": "Send Notification"
+    },
+    "general": {
+      "title": "General",
+      "description": "How OnesNotch starts and when the notch shows itself.",
+      "autostart": "Start with Windows",
+      "autostartHint": "Open OnesNotch automatically when you sign in.",
+      "autoHide": "Auto-hide",
+      "autoHideHint": "Keep the notch above the screen edge. It slides down for notifications, videos, reminders and timers, or when you move the cursor to the top edge.",
+      "interval": "Show every",
+      "intervalHint": "While hidden, the notch drops in briefly at this interval.",
+      "showFor": "Show for",
+      "showForHint": "How long each automatic appearance lasts."
+    },
+    "water": {
+      "title": "Drink reminder",
+      "description": "Reminds you to drink through the day. The daily goal is your weight × 30 ml, spread over 12 hours.",
+      "enable": "Drink reminder",
+      "enableHint": "The reminder stays in the notch until you click Drink.",
+      "goal": "Daily goal",
+      "formula": "{{weight}} kg × 30 ml = {{target}} ml",
+      "today": "Today",
+      "weight": "Body weight",
+      "weightHint": "Used to calculate the daily goal.",
+      "startTime": "Start time",
+      "window": "Reminders run {{start}}–{{end}} ({{hours}} hours).",
+      "glass": "Glass size",
+      "schedule": "{{count}} reminders, about every {{minutes}} minutes.",
+      "reset": "Today's progress",
+      "resetHint": "Start today's count from zero.",
+      "resetButton": "Reset today"
     }
   },
   "notifications": {
@@ -223,7 +261,12 @@
   },
   "common": {
     "add": "Add",
-    "seconds": "seconds"
+    "seconds": "seconds",
+    "close": "Close",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "reset": "Reset",
+    "minutes": "minutes"
   },
   "tools": {
     "title": "Tools",
@@ -243,7 +286,10 @@
       "ready": "Ready",
       "completed": "Time's up!",
       "portsCount": "{{count}} Ports",
-      "appsCount": "{{count}} Apps"
+      "appsCount": "{{count}} Apps",
+      "focus": "Focus",
+      "break": "Break",
+      "session": "25m · Session {{cycle}}/4"
     },
     "nav": {
       "clipboard": "Clipboard",
@@ -252,7 +298,8 @@
       "pomodoro": "Pomodoro",
       "ports": "Port List",
       "runner": "Terminal Apps",
-      "scanner": "QR & Barcode"
+      "scanner": "QR & Barcode",
+      "water": "Drink water"
     },
     "clipboard": {
       "searchPlaceholder": "Search clipboard history...",
@@ -272,7 +319,8 @@
       "pause": "Pause",
       "reset": "Reset",
       "completed": "Time's Up!",
-      "custom": "Set Custom"
+      "custom": "Set Custom",
+      "addMinute": "+1 minute"
     },
     "stopwatch": {
       "start": "Start",
@@ -331,7 +379,10 @@
       "copy": "Copy Command",
       "copied": "Copied!",
       "edit": "Edit Shortcut",
-      "delete": "Delete Shortcut"
+      "delete": "Delete Shortcut",
+      "copyStart": "Copy start command",
+      "copyStop": "Copy stop command",
+      "runNow": "Run command now"
     },
     "scanner": {
       "title": "QR & Barcode Scanner",
@@ -354,7 +405,82 @@
       "noCodeFound": "No clear QR Code or Barcode found in image.",
       "openedUrl": "Link automatically opened in browser!",
       "searchedQuery": "Barcode search opened in browser!",
-      "scannedSuccess": "Barcode scanned successfully!"
-    }
+      "scannedSuccess": "Barcode scanned successfully!",
+      "screen": "Screen",
+      "captureFailed": "Could not capture the screen for scanning.",
+      "cameraError": "Could not open the camera, or permission was denied."
+    },
+    "reorderHint": "Drag cards or use the arrows to reorder",
+    "resetOrder": "Reset to default order",
+    "count": "{{count}} tools",
+    "moveLeft": "Move left",
+    "moveRight": "Move right"
+  },
+  "water": {
+    "reminderTitle": "Time for a glass of water",
+    "reminderBody": "{{glass}} ml · {{consumed}} / {{target}} ml today",
+    "drink": "Drink",
+    "later": "Later",
+    "glasses_one": "{{count}} glass today",
+    "glasses_other": "{{count}} glasses today",
+    "off": "Reminder is off",
+    "goalReached": "Daily goal reached 🎉",
+    "nextAt": "Next reminder at {{time}}",
+    "addGlass": "+{{ml}} ml",
+    "openSettings": "Reminder settings"
+  },
+  "video": {
+    "active": "On",
+    "interval": "Play interval (seconds)",
+    "intervalHint": "Every {{seconds}} s a random video plays in the notch.",
+    "duration": "Show for (seconds)",
+    "full": "Full",
+    "durationFullHint": "The video plays to the end, then the clock returns.",
+    "durationHint": "Shows for {{seconds}} s, then the clock returns.",
+    "muted": "Muted",
+    "sound": "Sound on",
+    "format": "Fit:",
+    "cover": "Fill (cover)",
+    "contain": "Fit (contain)",
+    "list_one": "Video collection ({{count}})",
+    "list_other": "Video collection ({{count}})",
+    "listHint": "random every {{seconds}} s",
+    "picking": "Opening…",
+    "pick": "Choose MP4 files",
+    "demoHint": "Add the built-in sample clips",
+    "demo": "+ Demo clip",
+    "manual": "Add by URL or file path",
+    "clearAll": "Remove all videos",
+    "namePlaceholder": "Video name (optional)",
+    "pathPlaceholder": "File path (C:\\...) or URL (https://...mp4)",
+    "empty": "No MP4 videos yet",
+    "emptyHint": "Choose one or more MP4 files from your computer, or add the demo clips to try it out.",
+    "playing": "Playing",
+    "stopHint": "Stop playback in the notch",
+    "stop": "Stop",
+    "testHint": "Play in the notch now",
+    "test": "Test",
+    "remove": "Remove this video",
+    "info": "Videos play in random order while the notch is idle. Hover the notch during playback to see the title and sound button.",
+    "errorDenied": "Video format or access was refused",
+    "errorLoad": "Could not load the file",
+    "errorCodec": "Video codec is not supported"
+  },
+  "update": {
+    "title": "Updates",
+    "available": "Update available · v{{version}}",
+    "availableHint": "Version {{version}} is ready (you have {{current}}).",
+    "current": "You have v{{version}}. Updating restarts OnesNotch.",
+    "upToDate": "You're on the latest version ({{version}}).",
+    "check": "Check for updates",
+    "checking": "Checking…",
+    "install": "Update",
+    "installVersion": "Install v{{version}}",
+    "later": "Later",
+    "downloading": "Downloading update… {{percent}}%",
+    "installing": "Installing… OnesNotch will restart",
+    "notes": "What's new in v{{version}}",
+    "auto": "Check automatically",
+    "autoHint": "Checks at startup and every 6 hours. Updates are signed and verified before installing."
   }
 }

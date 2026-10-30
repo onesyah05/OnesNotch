@@ -19,7 +19,8 @@ use crate::{
         db::{HistoryDb, HistoryEntry},
         keys,
         settings::{
-            HistoryEnabled, HotkeySettings, Opacity, Settings, SettingsState, ThemeSettings,
+            AutoHideSettings, Autostart, HistoryEnabled, HotkeySettings, Opacity, Settings,
+            SettingsState, ThemeSettings, UpdateSettings, WaterSettings,
         },
     },
     system, window,
@@ -58,6 +59,10 @@ pub struct SettingsView {
     pub opacity: u8,
     pub notifications: NotificationSettings,
     pub theme: ThemeSettings,
+    pub autostart: bool,
+    pub auto_hide: AutoHideSettings,
+    pub water: WaterSettings,
+    pub updates: UpdateSettings,
 }
 
 #[derive(Debug, Serialize)]
@@ -126,7 +131,7 @@ fn settings_visible<R: Runtime>(app: &AppHandle<R>) -> bool {
 
 fn hide_all<R: Runtime>(app: &AppHandle<R>) {
     for (label, window) in app.webview_windows() {
-        if let Err(err) = window.hide() {
+        if let Err(err) = window::stealth::hide(&window) {
             tracing::warn!("failed to hide window '{label}' during panic: {err}");
         }
     }
@@ -165,6 +170,10 @@ fn settings_view(settings: &Settings) -> SettingsView {
         opacity: settings.opacity.0,
         notifications: settings.notifications.clone(),
         theme: settings.theme.clone(),
+        autostart: settings.autostart.0,
+        auto_hide: settings.auto_hide,
+        water: settings.water.clone(),
+        updates: settings.updates,
     }
 }
 
@@ -274,6 +283,14 @@ pub fn set_answer_size(app: AppHandle, width: u32, height: u32) -> AppResult<()>
     Ok(())
 }
 
+/// Auto-hide tucked the pill away (or brought it back); the hover thread
+/// shrinks its hot area to a thin strip along the screen edge while hidden.
+#[tauri::command]
+pub fn set_concealed(app: AppHandle, concealed: bool) -> AppResult<()> {
+    app.state::<AppState>().set_concealed(concealed);
+    Ok(())
+}
+
 #[tauri::command]
 pub fn set_visible_in_capture(app: AppHandle, visible: bool) -> AppResult<()> {
     apply_capture_visibility(&app, visible)
@@ -330,13 +347,19 @@ pub fn show_settings(app: AppHandle) -> AppResult<()> {
     // window invisible behind other windows ("settings cannot be opened").
     let _ = window.set_always_on_top(true);
     window.show().map_err(internal)?;
+    // Hidden windows are always capture-excluded; now that it is on screen,
+    // follow the user's "visible in capture" choice again.
+    let visible_in_capture = app.state::<AppState>().visible_in_capture();
+    if let Err(err) = window::stealth::apply(&window, visible_in_capture) {
+        tracing::error!("failed to apply stealth to settings: {err}");
+    }
     window.set_focus().map_err(internal)
 }
 
 #[tauri::command]
 pub fn hide_settings(app: AppHandle) -> AppResult<()> {
     if let Some(window) = app.get_webview_window("settings") {
-        window.hide().map_err(internal)?;
+        window::stealth::hide(&window).map_err(internal)?;
     }
     Ok(())
 }
@@ -419,6 +442,68 @@ pub fn settings_update(app: AppHandle, patch: SettingsPatch) -> AppResult<Settin
         if let Some(enabled) = patch.history_enabled {
             settings.ai.history_enabled = HistoryEnabled(enabled);
         }
+        Ok(())
+    })
+}
+
+/// Turns launch-with-Windows on or off. The OS entry changes first, so the
+/// stored choice never claims something the registry does not reflect.
+#[tauri::command]
+pub fn autostart_set(app: AppHandle, enabled: bool) -> AppResult<SettingsView> {
+    system::autostart::apply(&app, enabled)?;
+    update_settings(&app, |settings| {
+        settings.autostart = Autostart(enabled);
+        Ok(())
+    })
+}
+
+#[tauri::command]
+pub fn auto_hide_update(app: AppHandle, settings: AutoHideSettings) -> AppResult<SettingsView> {
+    update_settings(&app, |current| {
+        current.auto_hide = settings;
+        current.normalize();
+        Ok(())
+    })
+}
+
+#[tauri::command]
+pub fn water_update(app: AppHandle, settings: WaterSettings) -> AppResult<SettingsView> {
+    update_settings(&app, |current| {
+        current.water = settings;
+        current.normalize();
+        Ok(())
+    })
+}
+
+// ---------------------------------------------------------------------------
+// Updates
+// ---------------------------------------------------------------------------
+
+/// Result of the last check (background or manual), if a newer version exists.
+#[tauri::command]
+pub fn update_status(
+    updates: State<'_, system::updater::UpdateState>,
+) -> AppResult<Option<system::updater::UpdateInfo>> {
+    Ok(updates.available())
+}
+
+#[tauri::command]
+pub async fn update_check(app: AppHandle) -> AppResult<Option<system::updater::UpdateInfo>> {
+    system::updater::check(&app).await
+}
+
+#[tauri::command]
+pub async fn update_install(
+    app: AppHandle,
+    on_event: Channel<system::updater::UpdateEvent>,
+) -> AppResult<()> {
+    system::updater::install(&app, on_event).await
+}
+
+#[tauri::command]
+pub fn update_set_auto_check(app: AppHandle, enabled: bool) -> AppResult<SettingsView> {
+    update_settings(&app, |settings| {
+        settings.updates.auto_check = enabled;
         Ok(())
     })
 }
@@ -741,8 +826,8 @@ pub async fn capture_screen_base64<R: Runtime>(
     app: AppHandle<R>,
     target: Option<CaptureTarget>,
 ) -> AppResult<String> {
-    use base64::{Engine, engine::general_purpose::STANDARD};
     use crate::capture::{self, encode};
+    use base64::{Engine, engine::general_purpose::STANDARD};
 
     let target = target.unwrap_or(CaptureTarget::Screen);
     let exclude_self = app.state::<AppState>().visible_in_capture();

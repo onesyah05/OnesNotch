@@ -64,6 +64,14 @@ pub struct Settings {
     pub notifications: NotificationSettings,
     #[serde(deserialize_with = "lenient")]
     pub theme: ThemeSettings,
+    #[serde(deserialize_with = "lenient")]
+    pub autostart: Autostart,
+    #[serde(deserialize_with = "lenient")]
+    pub auto_hide: AutoHideSettings,
+    #[serde(deserialize_with = "lenient")]
+    pub water: WaterSettings,
+    #[serde(deserialize_with = "lenient")]
+    pub updates: UpdateSettings,
 }
 
 impl Default for Settings {
@@ -75,8 +83,117 @@ impl Default for Settings {
             opacity: Opacity::default(),
             notifications: NotificationSettings::default(),
             theme: ThemeSettings::default(),
+            autostart: Autostart::default(),
+            auto_hide: AutoHideSettings::default(),
+            water: WaterSettings::default(),
+            updates: UpdateSettings::default(),
         }
     }
+}
+
+/// In-app update checks (`system::updater`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct UpdateSettings {
+    /// Check at start and every few hours.
+    pub auto_check: bool,
+}
+
+impl Default for UpdateSettings {
+    fn default() -> Self {
+        Self { auto_check: true }
+    }
+}
+
+/// Launch with Windows. The OS registry entry is the real switch; this is the
+/// user's choice, re-applied on startup so a moved install keeps working.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct Autostart(pub bool);
+
+impl Default for Autostart {
+    fn default() -> Self {
+        Self(true)
+    }
+}
+
+pub const AUTO_HIDE_INTERVAL_RANGE: (u32, u32) = (30, 3600);
+pub const AUTO_HIDE_SHOW_RANGE: (u32, u32) = (2, 60);
+
+/// Keeps the notch tucked above the screen edge until something happens.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct AutoHideSettings {
+    pub enabled: bool,
+    /// How often the notch drops in on its own, in seconds.
+    pub interval_seconds: u32,
+    /// How long each automatic appearance lasts, in seconds.
+    pub show_seconds: u32,
+}
+
+impl Default for AutoHideSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            interval_seconds: 180,
+            show_seconds: 5,
+        }
+    }
+}
+
+impl AutoHideSettings {
+    fn normalize(&mut self) {
+        let (lo, hi) = AUTO_HIDE_INTERVAL_RANGE;
+        self.interval_seconds = self.interval_seconds.clamp(lo, hi);
+        let (lo, hi) = AUTO_HIDE_SHOW_RANGE;
+        self.show_seconds = self.show_seconds.clamp(lo, hi);
+    }
+}
+
+pub const WATER_WEIGHT_RANGE: (u32, u32) = (20, 250);
+pub const WATER_GLASS_RANGE: (u32, u32) = (50, 1000);
+
+/// Drink reminder. The daily goal is derived from body weight in the UI
+/// (weight x 30 ml, spread over a 12-hour window starting at `start_time`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct WaterSettings {
+    pub enabled: bool,
+    pub weight_kg: u32,
+    /// Local start of the 12-hour window, `HH:MM`.
+    pub start_time: String,
+    pub glass_ml: u32,
+}
+
+impl Default for WaterSettings {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            weight_kg: 60,
+            start_time: "07:00".to_string(),
+            glass_ml: 250,
+        }
+    }
+}
+
+impl WaterSettings {
+    fn normalize(&mut self) {
+        let (lo, hi) = WATER_WEIGHT_RANGE;
+        self.weight_kg = self.weight_kg.clamp(lo, hi);
+        let (lo, hi) = WATER_GLASS_RANGE;
+        self.glass_ml = self.glass_ml.clamp(lo, hi);
+        self.start_time = parse_hhmm(&self.start_time)
+            .map(|(h, m)| format!("{h:02}:{m:02}"))
+            .unwrap_or_else(|| WaterSettings::default().start_time);
+    }
+}
+
+/// Parses `H:MM` / `HH:MM` (24h).
+pub fn parse_hhmm(raw: &str) -> Option<(u8, u8)> {
+    let (h, m) = raw.trim().split_once(':')?;
+    let h: u8 = h.parse().ok()?;
+    let m: u8 = m.parse().ok()?;
+    (h < 24 && m < 60).then_some((h, m))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -190,8 +307,9 @@ impl Settings {
         settings
     }
 
-    /// Repairs values that parsed but are out of range.
-    fn normalize(&mut self) {
+    /// Repairs values that parsed but are out of range. Also used on values
+    /// coming from the UI, so they are clamped the same way stored ones are.
+    pub fn normalize(&mut self) {
         // v0 (no version field) has the same shape as v1; future migrations go here.
         self.version = VERSION;
         self.opacity.0 = self.opacity.0.clamp(MIN_OPACITY, MAX_OPACITY);
@@ -220,6 +338,9 @@ impl Settings {
         if self.theme.accent_color.trim().is_empty() {
             self.theme.accent_color = "#22D3EE".to_string();
         }
+
+        self.auto_hide.normalize();
+        self.water.normalize();
 
         let defaults = HotkeySettings::default();
         for action in HotkeyAction::ALL {
@@ -400,6 +521,34 @@ mod tests {
 
         let saved = serde_json::to_value(&settings).unwrap();
         assert!(saved.get("visibleInCapture").is_none(), "rule 2");
+    }
+
+    #[test]
+    fn auto_hide_and_water_are_clamped() {
+        let settings = Settings::from_value(json!({
+            "autoHide": { "enabled": false, "intervalSeconds": 1, "showSeconds": 9999 },
+            "water": { "weightKg": 5, "startTime": "25:00", "glassMl": 4000 },
+            "autostart": "nope"
+        }));
+        assert!(!settings.auto_hide.enabled);
+        assert_eq!(
+            settings.auto_hide.interval_seconds,
+            AUTO_HIDE_INTERVAL_RANGE.0
+        );
+        assert_eq!(settings.auto_hide.show_seconds, AUTO_HIDE_SHOW_RANGE.1);
+        assert_eq!(settings.water.weight_kg, WATER_WEIGHT_RANGE.0);
+        assert_eq!(settings.water.glass_ml, WATER_GLASS_RANGE.1);
+        assert_eq!(settings.water.start_time, "07:00", "invalid time → default");
+        assert!(settings.autostart.0, "wrong type → default");
+    }
+
+    #[test]
+    fn parses_start_times() {
+        assert_eq!(parse_hhmm("7:05"), Some((7, 5)));
+        assert_eq!(parse_hhmm(" 23:59 "), Some((23, 59)));
+        assert_eq!(parse_hhmm("24:00"), None);
+        assert_eq!(parse_hhmm("12:60"), None);
+        assert_eq!(parse_hhmm("noon"), None);
     }
 
     #[test]

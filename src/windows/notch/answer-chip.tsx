@@ -145,9 +145,9 @@ export function AnswerChip({ onSize }: { onSize: (size: ChipSize) => void }) {
           onClick={(event) => event.stopPropagation()}
         >
           {/* Header jawaban essay dengan status, tombol copy, dan tombol close */}
-          <div className="flex w-full shrink-0 items-center justify-between pb-2 mb-2 border-b border-white/[0.08] text-xs">
+          <div className="flex w-full shrink-0 items-center justify-between pb-2 mb-2 border-b border-fg/[0.08] text-xs">
             <div className="flex items-center gap-2">
-              <span className="size-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="size-2 rounded-full bg-accent animate-pulse" />
               <span className="font-semibold text-fg tracking-wide">
                 {last?.status === "streaming" ? t("ai.status.answering") : t("ai.title")}
               </span>
@@ -156,7 +156,7 @@ export function AnswerChip({ onSize }: { onSize: (size: ChipSize) => void }) {
               <button
                 type="button"
                 onClick={handleCopy}
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-subtle hover:bg-white/[0.08] hover:text-fg transition-colors"
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-subtle hover:bg-fg/[0.08] hover:text-fg transition-colors"
                 title={copied ? "Tersalin!" : "Salin Jawaban"}
               >
                 {copied ? <Check className="size-3.5 text-ok" /> : <Copy className="size-3.5" />}
@@ -165,8 +165,8 @@ export function AnswerChip({ onSize }: { onSize: (size: ChipSize) => void }) {
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex items-center justify-center size-6 rounded-md text-muted hover:bg-white/[0.08] hover:text-fg transition-colors"
-                title="Tutup"
+                className="flex items-center justify-center size-6 rounded-md text-muted hover:bg-fg/[0.08] hover:text-fg transition-colors"
+                title={t("common.close")}
               >
                 <X className="size-3.5" />
               </button>

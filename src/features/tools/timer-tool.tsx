@@ -68,8 +68,8 @@ export function TimerTool() {
               onClick={() => setDuration(preset.seconds)}
               className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
                 isActive
-                  ? "bg-white/20 text-fg shadow-sm border border-white/20 font-semibold"
-                  : "bg-surface/50 text-subtle hover:bg-surface hover:text-fg border border-white/5"
+                  ? "bg-fg/20 text-fg shadow-sm border border-fg/20 font-semibold"
+                  : "bg-surface/50 text-subtle hover:bg-surface hover:text-fg border border-fg/5"
               }`}
             >
               {preset.label}
@@ -84,13 +84,13 @@ export function TimerTool() {
           <div className="flex flex-col items-center gap-2 animate-bounce">
             <div
               className="flex size-14 items-center justify-center rounded-full text-black shadow-lg"
-              style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             >
               <Check className="size-8 stroke-[3]" />
             </div>
             <span
               className="font-bold text-sm tracking-wide"
-              style={{ color: "var(--notch-accent, #22d3ee)" }}
+              style={{ color: "var(--color-accent)" }}
             >
               {t("tools.timer.completed")}
             </span>
@@ -99,18 +99,18 @@ export function TimerTool() {
           <div className="flex flex-col items-center">
             <span
               className="font-mono text-5xl font-bold tracking-tight"
-              style={{ color: isRunning ? "var(--notch-accent, #22d3ee)" : "var(--color-fg)" }}
+              style={{ color: isRunning ? "var(--color-accent)" : "var(--color-fg)" }}
             >
               {formatSeconds(remainingSeconds)}
             </span>
 
             {/* Circular / Line Progress */}
-            <div className="mt-3 h-1.5 w-44 rounded-full bg-white/10 overflow-hidden">
+            <div className="mt-3 h-1.5 w-44 rounded-full bg-fg/10 overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-300"
                 style={{
                   width: `${progress}%`,
-                  backgroundColor: "var(--notch-accent, #22d3ee)",
+                  backgroundColor: "var(--color-accent)",
                 }}
               />
             </div>
@@ -125,7 +125,7 @@ export function TimerTool() {
             type="button"
             onClick={reset}
             title={t("tools.timer.reset")}
-            className="flex size-9 items-center justify-center rounded-full border border-white/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
+            className="flex size-9 items-center justify-center rounded-full border border-fg/10 bg-surface/60 text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
           >
             <RotateCcw className="size-4" />
           </button>
@@ -134,8 +134,8 @@ export function TimerTool() {
             type="button"
             onClick={isRunning ? pause : start}
             title={isRunning ? t("tools.timer.pause") : t("tools.timer.start")}
-            className="flex size-12 items-center justify-center rounded-full text-slate-950 font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
-            style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+            className="flex size-12 items-center justify-center rounded-full text-bg font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
+            style={{ backgroundColor: "var(--color-accent)" }}
           >
             {isRunning ? (
               <Pause className="size-5 fill-current" />
@@ -147,8 +147,8 @@ export function TimerTool() {
           <button
             type="button"
             onClick={() => addSeconds(60)}
-            title="+1 menit"
-            className="flex items-center gap-1 rounded-full border border-white/10 bg-surface/60 px-3 py-1.5 text-xs font-semibold text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
+            title={t("tools.timer.addMinute")}
+            className="flex items-center gap-1 rounded-full border border-fg/10 bg-surface/60 px-3 py-1.5 text-xs font-semibold text-subtle hover:bg-surface hover:text-fg active:scale-95 transition-all shadow-sm"
           >
             <Plus className="size-3.5" />
             <span>1m</span>
@@ -163,15 +163,15 @@ export function TimerTool() {
             type="number"
             min="1"
             max="720"
-            placeholder="menit"
+            placeholder={t("common.minutes")}
             value={customMin}
             onChange={(e) => setCustomMin(e.target.value)}
-            className="w-16 rounded-md border border-white/10 bg-surface/60 px-2 py-0.5 text-center font-mono text-xs text-fg focus:border-white/30 focus:outline-none"
+            className="w-16 rounded-md border border-fg/10 bg-surface/60 px-2 py-0.5 text-center font-mono text-xs text-fg focus:border-fg/30 focus:outline-none"
           />
           <button
             type="submit"
             disabled={!customMin}
-            className="rounded-md border border-white/10 bg-surface px-2 py-0.5 font-medium hover:bg-elevated disabled:opacity-40 transition-colors"
+            className="rounded-md border border-fg/10 bg-surface px-2 py-0.5 font-medium hover:bg-elevated disabled:opacity-40 transition-colors"
           >
             {t("common.add")}
           </button>

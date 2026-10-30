@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { Volume2, VolumeX, X } from "lucide-react";
@@ -28,6 +29,7 @@ function resolveVideoSrc(path: string): string {
 }
 
 export function NotchVideoPlayer({ video, settings, onFinished }: NotchVideoPlayerProps) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(settings.muted);
   const [loadError, setLoadError] = useState(false);
@@ -69,7 +71,7 @@ export function NotchVideoPlayer({ video, settings, onFinished }: NotchVideoPlay
 
   if (loadError || !src) {
     return (
-      <div className="relative size-full flex items-center justify-between px-4 rounded-full bg-ink-950 text-xs text-subtle border border-live/30">
+      <div className="relative size-full flex items-center justify-between px-4 rounded-[inherit] bg-bg text-xs text-subtle border border-live/30">
         <div className="flex items-center gap-1.5 truncate max-w-[220px]">
           <span className="size-1.5 rounded-full bg-live shrink-0" />
           <span className="truncate text-muted text-[11px]">
@@ -79,8 +81,8 @@ export function NotchVideoPlayer({ video, settings, onFinished }: NotchVideoPlay
         <button
           type="button"
           onClick={onFinished}
-          title="Tutup pesan error"
-          className="size-6 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-fg"
+          title={t("common.close")}
+          className="size-6 flex items-center justify-center rounded-full bg-fg/10 hover:bg-fg/20 text-fg"
         >
           <X className="size-3.5" />
         </button>
@@ -89,7 +91,7 @@ export function NotchVideoPlayer({ video, settings, onFinished }: NotchVideoPlay
   }
 
   return (
-    <div className="group relative size-full overflow-hidden rounded-full bg-black select-none ring-1 ring-white/15 shadow-notch">
+    <div className="group relative size-full overflow-hidden rounded-[inherit] bg-black select-none ring-1 ring-fg/15 shadow-notch">
       {/* HTML5 Video element */}
       <video
         ref={videoRef}
@@ -101,28 +103,28 @@ export function NotchVideoPlayer({ video, settings, onFinished }: NotchVideoPlay
         onEnded={onFinished}
         onError={(e) => {
           const err = e.currentTarget.error;
-          let detail = "Format atau akses video ditolak";
+          let detail = t("video.errorDenied");
           if (err) {
-            if (err.code === 2) detail = "Gagal memuat file (Network/IO)";
-            else if (err.code === 3) detail = "Codec video tidak didukung";
+            if (err.code === 2) detail = t("video.errorLoad");
+            else if (err.code === 3) detail = t("video.errorCodec");
             else if (err.code === 4) detail = "Akses file ditolak (Protocol)";
           }
           console.error("[NotchVideoPlayer] Media error:", err, "src:", src);
           setErrorMessage(detail);
           setLoadError(true);
         }}
-        className={`size-full ${settings.objectFit === "contain" ? "object-contain" : "object-cover"} rounded-full pointer-events-none transition-transform duration-300`}
+        className={`size-full ${settings.objectFit === "contain" ? "object-contain" : "object-cover"} rounded-[inherit] pointer-events-none transition-transform duration-300`}
       />
 
       {/* Subtle overlay gradient on hover */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/60 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
+      <div className="absolute inset-0 rounded-[inherit] bg-gradient-to-t from-black/60 via-transparent to-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
 
       {/* Controls on hover */}
       <div className="absolute inset-0 flex items-center justify-between px-3.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto">
         {/* Left: Video label */}
         <div className="flex items-center gap-1.5 min-w-0 max-w-[170px] drop-shadow-md">
-          <span className="size-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0" />
-          <span className="text-[11px] font-medium text-white truncate">{video.name}</span>
+          <span className="size-1.5 rounded-full bg-accent animate-pulse shrink-0" />
+          <span className="text-[11px] font-medium text-fg truncate">{video.name}</span>
         </div>
 
         {/* Right: Actions */}
@@ -134,19 +136,19 @@ export function NotchVideoPlayer({ video, settings, onFinished }: NotchVideoPlay
               e.stopPropagation();
               setIsMuted(!isMuted);
             }}
-            className="flex size-6 items-center justify-center rounded-full bg-black/60 text-white/90 hover:bg-black/90 hover:text-white transition-all active:scale-95 border border-white/20 shadow-sm"
+            className="flex size-6 items-center justify-center rounded-full bg-black/60 text-fg/90 hover:bg-black/90 hover:text-fg transition-all active:scale-95 border border-fg/20 shadow-sm"
           >
             {isMuted ? <VolumeX className="size-3" /> : <Volume2 className="size-3" />}
           </button>
 
           <button
             type="button"
-            title="Tutup Video"
+            title={t("common.close")}
             onClick={(e) => {
               e.stopPropagation();
               onFinished();
             }}
-            className="flex size-6 items-center justify-center rounded-full bg-black/60 text-white/90 hover:bg-black/90 hover:text-white transition-all active:scale-95 border border-white/20 shadow-sm"
+            className="flex size-6 items-center justify-center rounded-full bg-black/60 text-fg/90 hover:bg-black/90 hover:text-fg transition-all active:scale-95 border border-fg/20 shadow-sm"
           >
             <X className="size-3" />
           </button>

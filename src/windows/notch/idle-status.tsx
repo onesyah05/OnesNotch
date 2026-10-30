@@ -41,7 +41,7 @@ function getBatteryColor(level: number | null | undefined, charging: boolean | u
   if (charging) return "text-ok";
   if (level == null) return "text-subtle";
   if (level > 70) return "text-ok"; // > 70% Hijau
-  if (level >= 50) return "text-amber-400"; // 50% - 70% Orange
+  if (level >= 50) return "text-warn"; // 50% - 70% Orange
   return "text-live"; // < 50% Merah
 }
 
@@ -61,13 +61,13 @@ function getNetworkColor(
     return "text-ok"; // Hijau saat aktif/kencang
   }
   if (m >= medThreshold || b >= medBytes) {
-    return "text-amber-400"; // Orange saat moderat
+    return "text-warn"; // Orange saat moderat
   }
   return "text-live/85"; // Merah saat lambat/idle
 }
 
 export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { media } = useMediaStore();
   const [now, setNow] = useState(() => new Date());
   const [stats, setStats] = useState<SystemStats | null>(null);
@@ -117,7 +117,7 @@ export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
       <div className="relative flex h-full w-full items-center justify-between px-5 text-fg select-none">
         {/* Left: Thumbnail & Track Title + Artist */}
         <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
-          <div className="relative size-10 shrink-0 overflow-hidden rounded-[10px] bg-surface ring-1 ring-white/15 shadow-sm">
+          <div className="relative size-10 shrink-0 overflow-hidden rounded-[10px] bg-surface ring-1 ring-fg/15 shadow-sm">
             {media.coverUrl ? (
               <img src={media.coverUrl} alt="" className="size-full object-cover" />
             ) : (
@@ -145,43 +145,43 @@ export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
               animate={{ height: ["4px", "18px", "6px", "20px", "4px"] }}
               transition={{ duration: 1.0, repeat: Infinity, ease: "easeInOut" }}
               className="w-[3px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #f59e0b)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
             <motion.span
               animate={{ height: ["12px", "6px", "20px", "8px", "12px"] }}
               transition={{ duration: 0.85, repeat: Infinity, ease: "easeInOut", delay: 0.15 }}
               className="w-[3px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #f59e0b)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
             <motion.span
               animate={{ height: ["6px", "18px", "4px", "18px", "6px"] }}
               transition={{ duration: 1.15, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
               className="w-[3px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #f59e0b)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
             <motion.span
               animate={{ height: ["10px", "20px", "12px", "4px", "10px"] }}
               transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut", delay: 0.1 }}
               className="w-[3px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #f59e0b)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
           </div>
 
           {visibleInCapture && (
             <span
               className="ml-1 size-2 shrink-0 rounded-full bg-live animate-pulse"
-              title="Visible in screen capture"
+              title={t("notch.visibleInCapture")}
             />
           )}
         </div>
 
         {/* Bottom: Progress Bar Lagu */}
-        <div className="absolute inset-x-6 bottom-2 h-[2.5px] rounded-full bg-white/10 overflow-hidden">
+        <div className="absolute inset-x-6 bottom-2 h-[2.5px] rounded-full bg-fg/10 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
               width: `${progressPercent}%`,
-              background: "var(--notch-accent, #f59e0b)",
+              background: "var(--color-accent)",
             }}
           />
         </div>
@@ -219,26 +219,26 @@ export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
         {/* 2. Timer / Notifikasi */}
         <div className="flex items-center justify-center min-w-0 flex-1 px-2">
           {isTimerCompleted ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-300/50 shadow-[0_0_16px_rgba(34,211,238,0.35)] font-mono text-[12.5px] font-bold text-cyan-200 animate-pulse">
-              <Timer className="size-4 shrink-0 text-cyan-300" />
-              <span className="text-white font-bold tracking-tight">00:00 Selesai!</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/20 border border-accent/50 shadow-[0_0_16px_color-mix(in_srgb,var(--color-accent)_35%,transparent)] font-mono text-[12.5px] font-bold text-accent animate-pulse">
+              <Timer className="size-4 shrink-0 text-accent" />
+              <span className="text-fg font-bold tracking-tight">00:00 Selesai!</span>
             </div>
           ) : isTimerRunning ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-400/35 font-mono text-[12.5px] font-semibold text-cyan-300">
-              <Timer className="size-4 shrink-0 text-cyan-400" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/35 font-mono text-[12.5px] font-semibold text-accent">
+              <Timer className="size-4 shrink-0 text-accent" />
               <span>{formatSeconds(timerRemaining)}</span>
             </div>
           ) : isPomodoroRunning ? (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/35 font-mono text-[12.5px] font-semibold text-amber-300">
-              <Flame className="size-4 shrink-0 text-amber-400 animate-pulse" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-warn/15 border border-warn/35 font-mono text-[12.5px] font-semibold text-warn">
+              <Flame className="size-4 shrink-0 text-warn animate-pulse" />
               <span>{formatSeconds(pomodoroRemaining)}</span>
               <span className="text-[10px] opacity-75">
-                ({pomodoroMode === "work" ? "Fokus" : "Break"})
+                ({t(pomodoroMode === "work" ? "tools.status.focus" : "tools.status.break")})
               </span>
             </div>
           ) : activePopup ? (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-white/10 text-fg text-[12px] truncate max-w-[160px]">
-              <Bell className="size-3.5 shrink-0 text-cyan-400" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-fg/10 text-fg text-[12px] truncate max-w-[160px]">
+              <Bell className="size-3.5 shrink-0 text-accent" />
               <span className="truncate">{activePopup.title}</span>
             </div>
           ) : null}
@@ -257,7 +257,7 @@ export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
           {visibleInCapture && (
             <span
               className="ml-1 size-2 shrink-0 rounded-full bg-live animate-pulse"
-              title="Visible in screen capture"
+              title={t("notch.visibleInCapture")}
             />
           )}
         </div>
@@ -305,13 +305,13 @@ export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
         className={`flex items-center gap-1 font-mono text-[10.5px] font-semibold ${batteryColor}`}
       >
         {battery?.charging ? (
-          <span className="text-ok font-bold" title="Charging">
+          <span className="text-ok font-bold" title={t("notch.charging")}>
             <Zap className="size-3 fill-current" />
           </span>
         ) : battery?.level != null ? (
           <BatteryIcon level={battery.level} colorClass={batteryColor} />
         ) : (
-          <span className="text-subtle" title="AC Power">
+          <span className="text-subtle" title={t("notch.acPower")}>
             <Plug className="size-3" />
           </span>
         )}
@@ -361,7 +361,7 @@ export function IdleStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
       {visibleInCapture && (
         <span
           className="ml-0.5 size-2 shrink-0 rounded-full bg-live animate-pulse"
-          title="Visible in screen capture"
+          title={t("notch.visibleInCapture")}
         />
       )}
     </div>

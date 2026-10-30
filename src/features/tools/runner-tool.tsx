@@ -194,11 +194,11 @@ export function RunnerTool() {
             className="flex h-full flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/10 shrink-0">
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-fg/10 shrink-0">
               <button
                 type="button"
                 onClick={() => setIsFormOpen(false)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-subtle hover:text-fg border border-white/10 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-fg/5 hover:bg-fg/10 text-xs font-medium text-subtle hover:text-fg border border-fg/10 transition-colors"
               >
                 <ArrowLeft className="size-3.5" />
                 <span>{t("tools.runner.cancel", "Batal")}</span>
@@ -235,7 +235,7 @@ export function RunnerTool() {
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="e.g. Antares / Vite Dev Server"
-                  className="w-full h-8 rounded-xl border border-white/10 bg-surface/70 px-2.5 text-xs text-fg focus:border-cyan-400 focus:outline-none"
+                  className="w-full h-8 rounded-xl border border-fg/10 bg-surface/70 px-2.5 text-xs text-fg focus:border-accent focus:outline-none"
                 />
               </div>
 
@@ -244,7 +244,7 @@ export function RunnerTool() {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-[10.5px] font-medium text-subtle flex items-center gap-1.5">
-                      <span className="size-1.5 rounded-full bg-cyan-400" />
+                      <span className="size-1.5 rounded-full bg-accent" />
                       {t("tools.runner.commandStart", "Command Start")} *
                     </label>
                   </div>
@@ -254,14 +254,14 @@ export function RunnerTool() {
                     value={formCommand}
                     onChange={(e) => setFormCommand(e.target.value)}
                     placeholder="e.g. npm run dev / antares"
-                    className="w-full h-8 rounded-xl border border-white/10 bg-surface/70 px-2.5 font-mono text-xs text-cyan-300 focus:border-cyan-400 focus:outline-none"
+                    className="w-full h-8 rounded-xl border border-fg/10 bg-surface/70 px-2.5 font-mono text-xs text-accent focus:border-accent focus:outline-none"
                   />
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="text-[10.5px] font-medium text-subtle flex items-center gap-1.5">
-                      <span className="size-1.5 rounded-full bg-rose-400" />
+                      <span className="size-1.5 rounded-full bg-live" />
                       {t("tools.runner.commandStop", "Command Stop (Opsional)")}
                     </label>
                     <span className="text-[9px] text-muted font-mono">default: Ctrl+C</span>
@@ -274,7 +274,7 @@ export function RunnerTool() {
                       "tools.runner.commandStopPlaceholder",
                       "Default: Ctrl+C (atau isi misal docker compose down)",
                     )}
-                    className="w-full h-8 rounded-xl border border-white/10 bg-surface/70 px-2.5 font-mono text-xs text-rose-300/90 focus:border-rose-400 focus:outline-none placeholder:text-muted/60"
+                    className="w-full h-8 rounded-xl border border-fg/10 bg-surface/70 px-2.5 font-mono text-xs text-live/90 focus:border-live focus:outline-none placeholder:text-muted/60"
                   />
                 </div>
               </div>
@@ -298,7 +298,7 @@ export function RunnerTool() {
                         setFormCommandStop(tpl.stop);
                         if (!formName) setFormName(tpl.label);
                       }}
-                      className="rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 px-2.5 py-1 text-[10px] font-mono text-subtle hover:text-fg active:scale-95 transition-all"
+                      className="rounded-lg bg-fg/5 hover:bg-fg/15 border border-fg/10 px-2.5 py-1 text-[10px] font-mono text-subtle hover:text-fg active:scale-95 transition-all"
                     >
                       {tpl.label}
                     </button>
@@ -321,7 +321,7 @@ export function RunnerTool() {
                         "tools.runner.noDirectory",
                         "Kosongkan untuk default direktori terminal",
                       )}
-                      className="w-full h-8 rounded-xl border border-white/10 bg-surface/70 pl-3 pr-7 font-mono text-xs text-fg focus:border-cyan-400 focus:outline-none"
+                      className="w-full h-8 rounded-xl border border-fg/10 bg-surface/70 pl-3 pr-7 font-mono text-xs text-fg focus:border-accent focus:outline-none"
                     />
                     {formDirectory && (
                       <button
@@ -339,7 +339,7 @@ export function RunnerTool() {
                     type="button"
                     onClick={handleBrowseFolder}
                     disabled={isPickingFolder}
-                    className="flex h-8 items-center gap-1.5 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 text-xs font-semibold active:scale-95 transition-all shrink-0 disabled:opacity-50"
+                    className="flex h-8 items-center gap-1.5 px-3 rounded-xl bg-accent/20 hover:bg-accent/30 border border-accent/40 text-accent text-xs font-semibold active:scale-95 transition-all shrink-0 disabled:opacity-50"
                   >
                     {isPickingFolder ? (
                       <Loader2 className="size-3.5 animate-spin" />
@@ -356,18 +356,18 @@ export function RunnerTool() {
               </div>
 
               {/* Mode & Color */}
-              <div className="grid grid-cols-2 gap-3 pt-1 border-t border-white/10">
+              <div className="grid grid-cols-2 gap-3 pt-1 border-t border-fg/10">
                 {/* Execution Mode */}
                 <div>
                   <label className="block text-[10.5px] font-medium text-subtle mb-1.5">
                     Mode Eksekusi:
                   </label>
-                  <div className="flex rounded-xl bg-white/5 p-0.5 border border-white/10 w-fit">
+                  <div className="flex rounded-xl bg-fg/5 p-0.5 border border-fg/10 w-fit">
                     <button
                       type="button"
                       onClick={() => setFormMode("terminal")}
                       className={`px-2.5 py-1 rounded-lg text-[10.5px] font-medium transition-colors ${
-                        formMode === "terminal" ? "bg-white/15 text-fg shadow-sm" : "text-muted"
+                        formMode === "terminal" ? "bg-fg/15 text-fg shadow-sm" : "text-muted"
                       }`}
                     >
                       Terminal Window
@@ -376,7 +376,7 @@ export function RunnerTool() {
                       type="button"
                       onClick={() => setFormMode("background")}
                       className={`px-2.5 py-1 rounded-lg text-[10.5px] font-medium transition-colors ${
-                        formMode === "background" ? "bg-white/15 text-fg shadow-sm" : "text-muted"
+                        formMode === "background" ? "bg-fg/15 text-fg shadow-sm" : "text-muted"
                       }`}
                     >
                       Background
@@ -397,7 +397,7 @@ export function RunnerTool() {
                         onClick={() => setFormColor(c.value)}
                         className={`size-5 rounded-full transition-transform ${
                           formColor === c.value
-                            ? "ring-2 ring-white scale-110 shadow-md"
+                            ? "ring-2 ring-fg scale-110 shadow-md"
                             : "opacity-60 hover:opacity-100"
                         }`}
                         style={{ backgroundColor: c.value }}
@@ -409,17 +409,17 @@ export function RunnerTool() {
               </div>
 
               {/* Bottom Action Buttons */}
-              <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
+              <div className="flex justify-end gap-2 pt-2 border-t border-fg/10">
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs text-subtle hover:text-fg transition-colors"
+                  className="px-3.5 py-1.5 rounded-xl border border-fg/10 bg-fg/5 hover:bg-fg/10 text-xs text-subtle hover:text-fg transition-colors"
                 >
                   {t("tools.runner.cancel", "Batal")}
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-xs font-semibold text-ink-950 transition-colors shadow active:scale-95"
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-accent hover:bg-accent text-xs font-semibold text-ink-950 transition-colors shadow active:scale-95"
                 >
                   <Check className="size-3.5 stroke-[2.5]" />
                   <span>{t("tools.runner.save", "Simpan Shortcut")}</span>
@@ -447,7 +447,7 @@ export function RunnerTool() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t("tools.runner.searchPlaceholder", "Cari app atau command...")}
-                  className="h-8 w-full rounded-xl border border-white/10 bg-surface/60 pl-8 pr-7 text-xs text-fg placeholder:text-muted focus:border-cyan-400/50 focus:outline-none focus:ring-1 focus:ring-cyan-400/30 transition-all font-mono"
+                  className="h-8 w-full rounded-xl border border-fg/10 bg-surface/60 pl-8 pr-7 text-xs text-fg placeholder:text-muted focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/30 transition-all font-mono"
                 />
                 {searchQuery && (
                   <button
@@ -463,14 +463,14 @@ export function RunnerTool() {
               <button
                 type="button"
                 onClick={handleOpenCreate}
-                className="flex h-8 items-center gap-1.5 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-xs font-semibold text-cyan-300 active:scale-95 transition-all shadow-sm shrink-0"
+                className="flex h-8 items-center gap-1.5 px-3 rounded-xl bg-accent/20 hover:bg-accent/30 border border-accent/40 text-xs font-semibold text-accent active:scale-95 transition-all shadow-sm shrink-0"
               >
                 <Plus className="size-3.5" />
                 <span>{t("tools.runner.addApp", "Tambah App")}</span>
               </button>
 
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 font-mono text-[11px] text-subtle shrink-0">
-                <SquareTerminal className="size-3 text-cyan-400" />
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-fg/5 border border-fg/10 font-mono text-[11px] text-subtle shrink-0">
+                <SquareTerminal className="size-3 text-accent" />
                 <span>{filteredApps.length}</span>
               </span>
             </div>
@@ -482,7 +482,7 @@ export function RunnerTool() {
                 <button
                   type="button"
                   onClick={() => useRunnerStore.setState({ error: null })}
-                  className="text-live hover:text-white"
+                  className="text-live hover:text-fg"
                 >
                   <X className="size-3" />
                 </button>
@@ -503,7 +503,7 @@ export function RunnerTool() {
                     <button
                       type="button"
                       onClick={handleOpenCreate}
-                      className="mt-1 text-cyan-400 hover:underline font-medium text-[11px]"
+                      className="mt-1 text-accent hover:underline font-medium text-[11px]"
                     >
                       + Tambah Shortcut Pertama
                     </button>
@@ -525,12 +525,12 @@ export function RunnerTool() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="group relative flex items-center justify-between rounded-xl border border-white/10 bg-surface/50 p-3 hover:border-white/20 hover:bg-surface/80 transition-all"
+                        className="group relative flex items-center justify-between rounded-xl border border-fg/10 bg-surface/50 p-3 hover:border-fg/20 hover:bg-surface/80 transition-all"
                       >
                         {/* Left: Icon, Details, and Commands */}
                         <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
                           <div
-                            className="flex items-center justify-center size-9 rounded-xl border border-white/10 shrink-0"
+                            className="flex items-center justify-center size-9 rounded-xl border border-fg/10 shrink-0"
                             style={{
                               backgroundColor: `${app.color ?? "#22d3ee"}20`,
                               borderColor: `${app.color ?? "#22d3ee"}40`,
@@ -548,8 +548,8 @@ export function RunnerTool() {
                                 {app.name}
                               </span>
                               {isRunning ? (
-                                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-mono border border-emerald-500/30">
-                                  <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-ok/20 text-ok text-[10px] font-mono border border-ok/30">
+                                  <span className="size-1.5 rounded-full bg-ok animate-pulse" />
                                   RUNNING {app.runningPid ? `PID ${app.runningPid}` : ""}
                                 </span>
                               ) : (
@@ -562,16 +562,16 @@ export function RunnerTool() {
                             {/* Commands Row: Start & Stop */}
                             <div className="flex items-center flex-wrap gap-1.5 mt-1.5 min-w-0">
                               {/* Start Command Badge */}
-                              <div className="flex items-center gap-1 rounded-md bg-black/40 border border-white/10 px-2 py-0.5 font-mono text-[11px] text-cyan-300 max-w-[200px]">
-                                <span className="text-[9px] font-bold text-cyan-400/80 uppercase tracking-wider">
+                              <div className="flex items-center gap-1 rounded-md bg-black/40 border border-fg/10 px-2 py-0.5 font-mono text-[11px] text-accent max-w-[200px]">
+                                <span className="text-[9px] font-bold text-accent/80 uppercase tracking-wider">
                                   Start
                                 </span>
                                 <span className="truncate">{app.command}</span>
                                 <button
                                   type="button"
                                   onClick={() => handleCopyCommand(`start-${app.id}`, app.command)}
-                                  title="Salin Command Start"
-                                  className="text-muted hover:text-white shrink-0 ml-0.5"
+                                  title={t("tools.runner.copyStart")}
+                                  className="text-muted hover:text-fg shrink-0 ml-0.5"
                                 >
                                   {copiedId === `start-${app.id}` ? (
                                     <Check className="size-2.5 text-ok" />
@@ -582,11 +582,11 @@ export function RunnerTool() {
                               </div>
 
                               {/* Stop Command Badge */}
-                              <div className="flex items-center gap-1 rounded-md bg-black/40 border border-white/10 px-2 py-0.5 font-mono text-[11px] text-subtle max-w-[200px]">
-                                <span className="text-[9px] font-bold text-rose-400/80 uppercase tracking-wider">
+                              <div className="flex items-center gap-1 rounded-md bg-black/40 border border-fg/10 px-2 py-0.5 font-mono text-[11px] text-subtle max-w-[200px]">
+                                <span className="text-[9px] font-bold text-live/80 uppercase tracking-wider">
                                   Stop
                                 </span>
-                                <span className="truncate text-rose-300/80">
+                                <span className="truncate text-live/80">
                                   {app.commandStop?.trim() ? app.commandStop : "Ctrl+C"}
                                 </span>
                                 {app.commandStop?.trim() && (
@@ -595,8 +595,8 @@ export function RunnerTool() {
                                     onClick={() =>
                                       handleCopyCommand(`stop-${app.id}`, app.commandStop!)
                                     }
-                                    title="Salin Command Stop"
-                                    className="text-muted hover:text-white shrink-0 ml-0.5"
+                                    title={t("tools.runner.copyStop")}
+                                    className="text-muted hover:text-fg shrink-0 ml-0.5"
                                   >
                                     {copiedId === `stop-${app.id}` ? (
                                       <Check className="size-2.5 text-ok" />
@@ -613,9 +613,9 @@ export function RunnerTool() {
                                   type="button"
                                   onClick={() => void openAppDirectory(app.directory!)}
                                   title={`Buka folder: ${app.directory}`}
-                                  className="flex items-center gap-1 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 px-1.5 py-0.5 text-[10px] text-subtle hover:text-fg font-mono truncate max-w-[130px]"
+                                  className="flex items-center gap-1 rounded-md bg-fg/5 hover:bg-fg/10 border border-fg/10 px-1.5 py-0.5 text-[10px] text-subtle hover:text-fg font-mono truncate max-w-[130px]"
                                 >
-                                  <FolderOpen className="size-2.5 text-amber-400 shrink-0" />
+                                  <FolderOpen className="size-2.5 text-warn shrink-0" />
                                   <span className="truncate">{app.directory}</span>
                                 </button>
                               )}
@@ -629,7 +629,7 @@ export function RunnerTool() {
                             type="button"
                             onClick={() => handleOpenEdit(app)}
                             title={t("tools.runner.edit", "Edit Shortcut")}
-                            className="flex size-7 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-subtle hover:bg-white/10 hover:text-fg active:scale-95 transition-all"
+                            className="flex size-7 items-center justify-center rounded-lg border border-fg/10 bg-fg/5 text-subtle hover:bg-fg/10 hover:text-fg active:scale-95 transition-all"
                           >
                             <Pencil className="size-3.5" />
                           </button>
@@ -638,7 +638,7 @@ export function RunnerTool() {
                             type="button"
                             onClick={() => deleteApp(app.id)}
                             title={t("tools.runner.delete", "Hapus Shortcut")}
-                            className="flex size-7 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-subtle hover:bg-red-500/20 hover:border-red-500/30 hover:text-red-400 active:scale-95 transition-all"
+                            className="flex size-7 items-center justify-center rounded-lg border border-fg/10 bg-fg/5 text-subtle hover:bg-live/20 hover:border-live/30 hover:text-live active:scale-95 transition-all"
                           >
                             <Trash2 className="size-3.5" />
                           </button>
@@ -652,7 +652,7 @@ export function RunnerTool() {
                               title={
                                 app.commandStop ? `Stop via: ${app.commandStop}` : "Stop (Ctrl+C)"
                               }
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-600 hover:bg-rose-500 text-white shadow-sm active:scale-95 transition-all disabled:opacity-50"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-live hover:bg-live text-fg shadow-sm active:scale-95 transition-all disabled:opacity-50"
                             >
                               {isStopping ? (
                                 <Loader2 className="size-3 animate-spin" />
@@ -670,11 +670,11 @@ export function RunnerTool() {
                               type="button"
                               onClick={() => void handleRun(app.id)}
                               disabled={isExecuting}
-                              title="Jalankan Command Sekarang"
+                              title={t("tools.runner.runNow")}
                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm active:scale-95 transition-all ${
                                 isRecentSuccess
                                   ? "bg-ok text-ink-950 font-bold"
-                                  : "bg-cyan-500 hover:bg-cyan-400 text-ink-950"
+                                  : "bg-accent hover:bg-accent text-ink-950"
                               }`}
                             >
                               {isExecuting ? (

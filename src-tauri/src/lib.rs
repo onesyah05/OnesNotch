@@ -28,12 +28,14 @@ pub fn run() {
 
     let result = tauri::Builder::default()
         .on_window_event(|window, event| {
-            if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                if window.label() == "settings" {
-                    api.prevent_close();
-                    if let Err(err) = window.hide() {
-                        tracing::warn!("failed to hide settings window: {err}");
-                    }
+            if let tauri::WindowEvent::CloseRequested { api, .. } = event
+                && window.label() == "settings"
+            {
+                api.prevent_close();
+                if let Some(webview) = window.app_handle().get_webview_window(window.label())
+                    && let Err(err) = crate::window::stealth::hide(&webview)
+                {
+                    tracing::warn!("failed to hide settings window: {err}");
                 }
             }
         })
@@ -45,17 +47,23 @@ pub fn run() {
             }
         }))
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        // Used from Rust only (`system::autostart`); the webview has no permission.
+        .plugin(tauri_plugin_autostart::Builder::new().build())
+        // Used from Rust only (`system::updater`); the webview has no permission.
+        .plugin(tauri_plugin_updater::Builder::new().build())
         // Used from Rust only; the webview has no store permissions.
         .plugin(tauri_plugin_store::Builder::default().build())
         .manage(state::AppState::default())
         .manage(ai::session::AiState::new())
         .manage(hotkeys::HotkeyState::default())
         .manage(system::stats::SystemStatsMonitor::new())
+        .manage(system::updater::UpdateState::default())
         .invoke_handler(tauri::generate_handler![
             commands::app_info,
             commands::app_status,
             commands::set_notch_state,
             commands::set_answer_size,
+            commands::set_concealed,
             commands::set_visible_in_capture,
             commands::set_opacity,
             commands::theme_set,
@@ -74,6 +82,13 @@ pub fn run() {
             commands::provider_set_key,
             commands::provider_delete_key,
             commands::provider_test,
+            commands::autostart_set,
+            commands::auto_hide_update,
+            commands::water_update,
+            commands::update_status,
+            commands::update_check,
+            commands::update_install,
+            commands::update_set_auto_check,
             commands::hotkey_set,
             commands::hotkeys_suspend,
             commands::history_list,
@@ -115,6 +130,7 @@ pub fn run() {
             window::apply_all(&handle, false);
 
             let settings = SettingsState::load(&handle);
+            system::autostart::sync_on_startup(&handle, settings.get().autostart.0);
             handle
                 .state::<state::AppState>()
                 .set_opacity(settings.get().opacity.0);
@@ -148,6 +164,7 @@ pub fn run() {
             hotkeys::register_all(&handle);
             window::spawn_background_workers(handle.clone());
             system::stats::spawn_stats_emitter(handle.clone());
+            system::updater::spawn_checker(handle.clone());
             notifications::listener::spawn_notification_listener(handle.clone(), notif_manager);
             system::clipboard::spawn_clipboard_listener(handle.clone(), clipboard_manager);
             let media_manager = media::spawn_media_listener(handle);

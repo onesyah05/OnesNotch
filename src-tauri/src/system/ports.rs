@@ -1,10 +1,10 @@
 //! Active network port inspection and process termination for developer utilities.
 
+use crate::error::{AppError, AppResult};
+use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::process::Command;
-use serde::{Deserialize, Serialize};
 use sysinfo::{Pid, System};
-use crate::error::{AppError, AppResult};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -148,12 +148,13 @@ fn kill_pid_sync(pid: u32) -> AppResult<()> {
                 // Fallback to Win32 TerminateProcess
                 use windows::Win32::Foundation::CloseHandle;
                 use windows::Win32::System::Threading::{
-                    OpenProcess, TerminateProcess, PROCESS_TERMINATE,
+                    OpenProcess, PROCESS_TERMINATE, TerminateProcess,
                 };
 
                 unsafe {
-                    let handle = OpenProcess(PROCESS_TERMINATE, false, pid)
-                        .map_err(|e| AppError::Internal(format!("Failed to open process {pid}: {e}")))?;
+                    let handle = OpenProcess(PROCESS_TERMINATE, false, pid).map_err(|e| {
+                        AppError::Internal(format!("Failed to open process {pid}: {e}"))
+                    })?;
                     let res = TerminateProcess(handle, 1);
                     let _ = CloseHandle(handle);
                     res.map_err(|e| {

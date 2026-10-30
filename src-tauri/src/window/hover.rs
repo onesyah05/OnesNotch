@@ -20,6 +20,9 @@ use super::{LOGICAL_WIDTH, PILL_TOP};
 
 const POLL_INTERVAL: Duration = Duration::from_millis(16);
 const HOVER_MARGIN: f64 = 6.0;
+/// Height of the hot strip along the screen edge while auto-hide has the
+/// notch tucked away. Thin, so browser tabs under it stay clickable.
+const REVEAL_STRIP: f64 = 4.0;
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -102,6 +105,15 @@ fn is_inside<R: Runtime>(app: &AppHandle<R>, state: &AppState) -> bool {
         return false;
     };
     let scale = window.scale_factor().unwrap_or(1.0);
+
+    if state.concealed() {
+        let width = NotchState::Idle.pill_size().0 * scale;
+        let left = origin.x as f64 + (LOGICAL_WIDTH * scale - width) / 2.0;
+        let top = origin.y as f64 + PILL_TOP * scale;
+        let bottom = top + REVEAL_STRIP * scale;
+        return (left..=left + width).contains(&cursor.x) && (top..=bottom).contains(&cursor.y);
+    }
+
     // The answer chip and dynamic idle activities report their measured footprint
     // via set_answer_size. For Peek and Expanded, footprints follow the state table.
     let (pill_width, pill_height) = match state.notch_state() {

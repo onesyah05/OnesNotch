@@ -38,6 +38,8 @@ pub enum AppError {
     HotkeyUnavailable(String),
     #[error("storage error: {0}")]
     Storage(String),
+    #[error("update failed: {0}")]
+    Update(String),
     #[error("{0}")]
     Internal(String),
 }
@@ -61,6 +63,7 @@ impl AppError {
             Self::InvalidInput(_) => "invalid_input",
             Self::HotkeyUnavailable(_) => "hotkey_unavailable",
             Self::Storage(_) => "storage",
+            Self::Update(_) => "update_failed",
             Self::Internal(_) => "internal",
         }
     }

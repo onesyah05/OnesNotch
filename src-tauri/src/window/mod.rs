@@ -16,7 +16,8 @@ use tauri::{AppHandle, Manager, Runtime, WebviewUrl, WebviewWindowBuilder};
 pub(crate) const LOGICAL_WIDTH: f64 = 640.0;
 pub(crate) const LOGICAL_HEIGHT: f64 = 480.0;
 /// Distance from the top of the work area to the pill, in logical pixels.
-pub(crate) const PILL_TOP: f64 = 12.0;
+/// Zero: the notch hangs from the screen edge like a hardware notch.
+pub(crate) const PILL_TOP: f64 = 0.0;
 
 pub(crate) fn spawn_background_workers<R: Runtime>(app: AppHandle<R>) {
     hover::spawn(app.clone());

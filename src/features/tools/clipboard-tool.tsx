@@ -50,7 +50,7 @@ export function ClipboardTool() {
     <div className="flex h-full flex-col gap-3 select-none">
       {/* Header controls: Search & Clear all */}
       <div className="flex items-center gap-2">
-        <div className="relative flex flex-1 items-center rounded-xl border border-white/10 bg-surface/70 px-2.5 py-1.5 focus-within:border-white/25 transition-colors">
+        <div className="relative flex flex-1 items-center rounded-xl border border-fg/10 bg-surface/70 px-2.5 py-1.5 focus-within:border-fg/25 transition-colors">
           <Search className="size-3.5 text-muted shrink-0 mr-2" />
           <input
             type="text"
@@ -75,7 +75,7 @@ export function ClipboardTool() {
             type="button"
             onClick={() => void clearAll()}
             title={t("tools.clipboard.clearAll")}
-            className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-surface/50 px-2.5 py-1.5 text-xs text-subtle hover:bg-live/15 hover:text-live hover:border-live/30 transition-all active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 rounded-xl border border-fg/10 bg-surface/50 px-2.5 py-1.5 text-xs text-subtle hover:bg-live/15 hover:text-live hover:border-live/30 transition-all active:scale-95 shrink-0"
           >
             <Trash2 className="size-3.5" />
             <span className="hidden sm:inline">{t("tools.clipboard.clear")}</span>
@@ -106,7 +106,7 @@ export function ClipboardTool() {
               <div
                 key={item.id}
                 onClick={() => void copy(item)}
-                className="group relative flex flex-col gap-1.5 rounded-xl border border-white/[0.08] bg-surface/40 p-2.5 hover:bg-surface/80 hover:border-white/15 transition-all cursor-pointer shadow-sm active:scale-[0.99]"
+                className="group relative flex flex-col gap-1.5 rounded-xl border border-fg/[0.08] bg-surface/40 p-2.5 hover:bg-surface/80 hover:border-fg/15 transition-all cursor-pointer shadow-sm active:scale-[0.99]"
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-mono text-xs text-fg leading-relaxed line-clamp-2 break-all select-text">
@@ -124,7 +124,7 @@ export function ClipboardTool() {
                       className={`flex size-6 items-center justify-center rounded-lg border transition-all ${
                         isCopied
                           ? "border-ok/40 bg-ok/20 text-ok"
-                          : "border-white/10 bg-white/5 text-subtle hover:bg-white/15 hover:text-fg"
+                          : "border-fg/10 bg-fg/5 text-subtle hover:bg-fg/15 hover:text-fg"
                       }`}
                     >
                       {isCopied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
@@ -144,7 +144,7 @@ export function ClipboardTool() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[10px] text-muted font-mono pt-0.5 border-t border-white/5">
+                <div className="flex items-center justify-between text-[10px] text-muted font-mono pt-0.5 border-t border-fg/5">
                   <span>{formatTimestamp(item.timestamp)}</span>
                   <span>{item.text.length} karakter</span>
                 </div>

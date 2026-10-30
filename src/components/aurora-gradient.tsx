@@ -27,7 +27,7 @@ export const AuroraGradient = memo(function AuroraGradient({
           className="absolute -top-12 -left-6 size-28 rounded-full blur-md animate-aurora-drift-1 opacity-35"
           style={{
             background:
-              "radial-gradient(circle, color-mix(in srgb, var(--notch-accent, #22d3ee) 25%, #98a9c4 75%) 0%, transparent 70%)",
+              "radial-gradient(circle, color-mix(in srgb, var(--color-accent) 25%, #98a9c4 75%) 0%, transparent 70%)",
           }}
         />
 
@@ -38,7 +38,7 @@ export const AuroraGradient = memo(function AuroraGradient({
           }`}
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, rgba(220, 227, 239, 0.35) 30%, color-mix(in srgb, var(--notch-accent, #22d3ee) 50%, white 50%) 50%, rgba(220, 227, 239, 0.35) 70%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, rgba(220, 227, 239, 0.35) 30%, color-mix(in srgb, var(--color-accent) 50%, white 50%) 50%, rgba(220, 227, 239, 0.35) 70%, transparent 100%)",
           }}
         />
 
@@ -59,7 +59,7 @@ export const AuroraGradient = memo(function AuroraGradient({
           className="absolute -top-12 -left-10 size-48 rounded-full blur-xl animate-aurora-drift-1 opacity-75"
           style={{
             background:
-              "radial-gradient(circle, color-mix(in srgb, var(--notch-accent, #22d3ee) 30%, #98a9c4 70%) 0%, rgb(83 102 132 / 0.15) 45%, transparent 75%)",
+              "radial-gradient(circle, color-mix(in srgb, var(--color-accent) 30%, #98a9c4 70%) 0%, rgb(83 102 132 / 0.15) 45%, transparent 75%)",
           }}
         />
         <div className="absolute -bottom-10 -right-10 size-40 rounded-full bg-[radial-gradient(circle,rgb(48_61_89/0.35)_0%,transparent_70%)] blur-xl animate-aurora-drift-2" />
@@ -69,7 +69,7 @@ export const AuroraGradient = memo(function AuroraGradient({
           className="absolute top-0 inset-x-6 h-[1.5px]"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--notch-accent, #22d3ee) 50%, #dce3ef 50%) 50%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-accent) 50%, #dce3ef 50%) 50%, transparent 100%)",
           }}
         />
       </div>
@@ -87,7 +87,7 @@ export const AuroraGradient = memo(function AuroraGradient({
           className="absolute -top-24 -left-20 h-96 w-96 rounded-full blur-3xl animate-aurora-drift-1"
           style={{
             background:
-              "radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--notch-accent, #22d3ee) 32%, #98a9c4 68%) 0%, rgb(83 102 132 / 0.22) 35%, rgb(48 61 89 / 0.1) 60%, transparent 80%)",
+              "radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--color-accent) 32%, #98a9c4 68%) 0%, rgb(83 102 132 / 0.22) 35%, rgb(48 61 89 / 0.1) 60%, transparent 80%)",
           }}
         />
 
@@ -145,7 +145,7 @@ export const AuroraGradient = memo(function AuroraGradient({
           className="absolute -bottom-24 left-1/4 h-64 w-96 rounded-full blur-3xl animate-aurora-drift-2 opacity-70"
           style={{
             background:
-              "radial-gradient(circle, color-mix(in srgb, var(--notch-accent, #22d3ee) 22%, #303d59 78%) 0%, transparent 70%)",
+              "radial-gradient(circle, color-mix(in srgb, var(--color-accent) 22%, #303d59 78%) 0%, transparent 70%)",
           }}
         />
 
@@ -166,7 +166,7 @@ export const AuroraGradient = memo(function AuroraGradient({
         className="absolute -top-36 -left-28 h-[460px] w-[460px] rounded-full blur-3xl animate-aurora-drift-1 opacity-80"
         style={{
           background:
-            "radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--notch-accent, #22d3ee) 25%, #98a9c4 75%) 0%, rgb(83 102 132 / 0.2) 40%, rgb(48 61 89 / 0.08) 65%, transparent 80%)",
+            "radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--color-accent) 25%, #98a9c4 75%) 0%, rgb(83 102 132 / 0.2) 40%, rgb(48 61 89 / 0.08) 65%, transparent 80%)",
         }}
       />
 
@@ -175,7 +175,7 @@ export const AuroraGradient = memo(function AuroraGradient({
         className="absolute top-1/4 -right-28 h-[520px] w-[560px] rounded-full blur-3xl animate-aurora-drift-2 opacity-75"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgb(83 102 132 / 0.24) 0%, color-mix(in srgb, var(--notch-accent, #22d3ee) 18%, #303d59 82%) 35%, rgb(30 38 59 / 0.1) 60%, transparent 75%)",
+            "radial-gradient(ellipse at center, rgb(83 102 132 / 0.24) 0%, color-mix(in srgb, var(--color-accent) 18%, #303d59 82%) 35%, rgb(30 38 59 / 0.1) 60%, transparent 75%)",
         }}
       />
 

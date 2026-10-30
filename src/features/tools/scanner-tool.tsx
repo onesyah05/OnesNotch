@@ -58,7 +58,7 @@ function checkIsUrl(raw: string): boolean {
   if (/^https?:\/\//i.test(str)) return true;
   if (/^www\.[a-z0-9-]+\.[a-z]{2,}/i.test(str)) return true;
   // Domain with valid TLD check
-  return /^[a-z0-9-]+(\.[a-z0-9-]+)+([\/?#].*)?$/i.test(str);
+  return /^[a-z0-9-]+(\.[a-z0-9-]+)+([/?#].*)?$/i.test(str);
 }
 
 function formatBarcodeName(fmt: BarcodeFormat | number): string {
@@ -210,17 +210,15 @@ export function ScannerTool() {
   const handleScanScreen = async () => {
     if (isScanning) return;
     setIsScanning(true);
-    setScanningSource(t("tools.scanner.screen", "Layar"));
+    setScanningSource(t("tools.scanner.screen"));
     setErrorMsg(null);
 
     try {
       // Capture the current monitor silently
       const base64 = await ipc.captureScreenBase64("screen");
-      await decodeImageSource(base64, t("tools.scanner.screen", "Layar"));
-    } catch (err) {
-      setErrorMsg(
-        t("tools.scanner.captureFailed", "Gagal mengambil tangkapan layar untuk pemindaian."),
-      );
+      await decodeImageSource(base64, t("tools.scanner.screen"));
+    } catch {
+      setErrorMsg(t("tools.scanner.captureFailed"));
       setIsScanning(false);
       setScanningSource(null);
     }
@@ -242,31 +240,28 @@ export function ScannerTool() {
   };
 
   // 3. Clipboard Paste Scanner (Ctrl+V)
-  const handlePaste = useCallback(
-    async (e: ClipboardEvent) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
+  const handlePaste = useCallback(async (e: ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
 
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (item && item.type.startsWith("image/")) {
-          const blob = item.getAsFile();
-          if (blob) {
-            e.preventDefault();
-            const reader = new FileReader();
-            reader.onload = () => {
-              if (typeof reader.result === "string") {
-                void decodeImageSource(reader.result, "Clipboard");
-              }
-            };
-            reader.readAsDataURL(blob);
-            return;
-          }
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item && item.type.startsWith("image/")) {
+        const blob = item.getAsFile();
+        if (blob) {
+          e.preventDefault();
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result === "string") {
+              void decodeImageSource(reader.result, "Clipboard");
+            }
+          };
+          reader.readAsDataURL(blob);
+          return;
         }
       }
-    },
-    [],
-  );
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener("paste", handlePaste);
@@ -285,20 +280,16 @@ export function ScannerTool() {
 
       if (!videoRef.current) return;
 
-      await reader.decodeFromVideoDevice(
-        null,
-        videoRef.current,
-        (result, _err) => {
-          if (result) {
-            const text = result.getText();
-            const format = formatBarcodeName(result.getBarcodeFormat());
-            stopCamera();
-            handleScanSuccess(text, format);
-          }
-        },
-      );
+      await reader.decodeFromVideoDevice(null, videoRef.current, (result) => {
+        if (result) {
+          const text = result.getText();
+          const format = formatBarcodeName(result.getBarcodeFormat());
+          stopCamera();
+          handleScanSuccess(text, format);
+        }
+      });
     } catch {
-      setErrorMsg(t("tools.scanner.cameraError", "Gagal mengakses kamera atau izin ditolak."));
+      setErrorMsg(t("tools.scanner.cameraError"));
       setIsCameraActive(false);
     }
   };
@@ -357,16 +348,16 @@ export function ScannerTool() {
       />
 
       {/* Top Banner / Actions Area */}
-      <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-surface/80 p-3.5 backdrop-blur-md shadow-sm">
+      <div className="flex flex-col gap-2.5 rounded-2xl border border-fg/10 bg-surface/80 p-3.5 backdrop-blur-md shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex size-7.5 items-center justify-center rounded-xl bg-cyan-500/15 border border-cyan-400/30 text-cyan-400 shadow-sm">
+            <div className="flex size-7.5 items-center justify-center rounded-xl bg-accent/15 border border-accent/30 text-accent shadow-sm">
               <ScanLine className="size-4" />
             </div>
             <div>
               <div className="text-[13px] font-semibold text-fg flex items-center gap-1.5">
                 <span>{t("tools.scanner.title", "QR & Barcode Scanner")}</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-medium">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-medium">
                   Auto Search
                 </span>
               </div>
@@ -388,7 +379,7 @@ export function ScannerTool() {
               type="checkbox"
               checked={autoOpen}
               onChange={toggleAutoOpen}
-              className="accent-cyan-400 size-3.5 cursor-pointer rounded"
+              className="accent-accent size-3.5 cursor-pointer rounded"
             />
           </label>
         </div>
@@ -400,12 +391,12 @@ export function ScannerTool() {
             type="button"
             disabled={isScanning}
             onClick={handleScanScreen}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 active:scale-[0.98] border border-cyan-400/40 text-cyan-200 text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-accent/20 hover:bg-accent/30 active:scale-[0.98] border border-accent/40 text-accent text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
           >
-            {isScanning && scanningSource === t("tools.scanner.screen", "Layar") ? (
-              <RefreshCw className="size-3.5 animate-spin text-cyan-300" />
+            {isScanning && scanningSource === t("tools.scanner.screen") ? (
+              <RefreshCw className="size-3.5 animate-spin text-accent" />
             ) : (
-              <Monitor className="size-3.5 text-cyan-300" />
+              <Monitor className="size-3.5 text-accent" />
             )}
             <span>{t("tools.scanner.scanScreen", "Pindai Layar")}</span>
           </button>
@@ -415,7 +406,7 @@ export function ScannerTool() {
             type="button"
             disabled={isScanning}
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 active:scale-[0.98] border border-white/10 text-fg text-xs font-medium transition-all disabled:opacity-50"
+            className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-fg/5 hover:bg-fg/10 active:scale-[0.98] border border-fg/10 text-fg text-xs font-medium transition-all disabled:opacity-50"
           >
             <Upload className="size-3.5 text-subtle" />
             <span>{t("tools.scanner.uploadImage", "Pilih Gambar")}</span>
@@ -429,7 +420,7 @@ export function ScannerTool() {
             className={`flex items-center justify-center gap-2 py-2 px-3 rounded-xl border text-xs font-medium transition-all ${
               isCameraActive
                 ? "bg-live/20 border-live/40 text-live"
-                : "bg-white/5 hover:bg-white/10 border-white/10 text-fg"
+                : "bg-fg/5 hover:bg-fg/10 border-fg/10 text-fg"
             }`}
           >
             {isCameraActive ? (
@@ -448,10 +439,10 @@ export function ScannerTool() {
 
         {/* Live Camera Viewport if active */}
         {isCameraActive && (
-          <div className="relative mt-2 overflow-hidden rounded-xl border border-cyan-500/30 bg-black/80 aspect-video flex items-center justify-center">
+          <div className="relative mt-2 overflow-hidden rounded-xl border border-accent/30 bg-black/80 aspect-video flex items-center justify-center">
             <video ref={videoRef} className="size-full object-cover" />
-            <div className="absolute inset-x-12 inset-y-6 border-2 border-dashed border-cyan-400/70 rounded-xl pointer-events-none animate-pulse flex items-center justify-center">
-              <span className="text-[10px] text-cyan-200 bg-black/60 px-2 py-0.5 rounded-full font-mono">
+            <div className="absolute inset-x-12 inset-y-6 border-2 border-dashed border-accent/70 rounded-xl pointer-events-none animate-pulse flex items-center justify-center">
+              <span className="text-[10px] text-accent bg-black/60 px-2 py-0.5 rounded-full font-mono">
                 Arahkan QR / Barcode ke sini
               </span>
             </div>
@@ -487,14 +478,14 @@ export function ScannerTool() {
 
       {/* Latest Result Card (if any) */}
       {latestResult && (
-        <div className="flex flex-col gap-2 rounded-2xl border border-cyan-500/30 bg-cyan-950/20 p-3.5 shadow-sm">
+        <div className="flex flex-col gap-2 rounded-2xl border border-accent/30 bg-accent/20 p-3.5 shadow-sm">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-cyan-300 flex items-center gap-1.5">
+              <span className="font-semibold text-accent flex items-center gap-1.5">
                 <Sparkles className="size-3.5" />
                 {t("tools.scanner.lastResult", "Hasil Pemindaian Terakhir")}
               </span>
-              <span className="rounded-md bg-cyan-400/15 border border-cyan-400/25 px-2 py-0.5 text-[10px] font-mono font-semibold text-cyan-200">
+              <span className="rounded-md bg-accent/15 border border-accent/25 px-2 py-0.5 text-[10px] font-mono font-semibold text-accent">
                 {latestResult.format}
               </span>
             </div>
@@ -509,7 +500,7 @@ export function ScannerTool() {
           </div>
 
           {/* Result Content Box */}
-          <div className="relative rounded-xl border border-white/10 bg-surface/90 p-2.5 text-xs font-mono break-all text-fg select-text leading-relaxed">
+          <div className="relative rounded-xl border border-fg/10 bg-surface/90 p-2.5 text-xs font-mono break-all text-fg select-text leading-relaxed">
             {latestResult.text}
           </div>
 
@@ -519,16 +510,16 @@ export function ScannerTool() {
               <button
                 type="button"
                 onClick={() => handleOpenBrowser(latestResult.text)}
-                className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 text-xs font-semibold transition-all active:scale-95"
+                className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg bg-accent/20 hover:bg-accent/30 border border-accent/40 text-accent text-xs font-semibold transition-all active:scale-95"
               >
                 {latestResult.isUrl ? (
                   <>
-                    <Globe className="size-3.5 text-cyan-300" />
+                    <Globe className="size-3.5 text-accent" />
                     <span>{t("tools.scanner.openUrl", "Buka Link")}</span>
                   </>
                 ) : (
                   <>
-                    <Search className="size-3.5 text-cyan-300" />
+                    <Search className="size-3.5 text-accent" />
                     <span>{t("tools.scanner.searchGoogle", "Cari di Google")}</span>
                   </>
                 )}
@@ -538,7 +529,7 @@ export function ScannerTool() {
               <button
                 type="button"
                 onClick={() => handleCopy(latestResult)}
-                className="flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-fg text-xs font-medium transition-all active:scale-95"
+                className="flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-fg/5 hover:bg-fg/10 border border-fg/10 text-fg text-xs font-medium transition-all active:scale-95"
               >
                 {copiedId === latestResult.id ? (
                   <>
@@ -585,7 +576,7 @@ export function ScannerTool() {
         </div>
 
         {history.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-white/10 p-6 text-center text-xs text-muted">
+          <div className="flex flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-fg/10 p-6 text-center text-xs text-muted">
             <QrCode className="size-8 text-muted/40 mb-2" />
             <p className="font-medium text-subtle">
               {t("tools.scanner.emptyHistory", "Belum ada kode yang dipindai")}
@@ -602,11 +593,11 @@ export function ScannerTool() {
             {history.map((item) => (
               <div
                 key={item.id}
-                className="group flex items-center justify-between rounded-xl border border-white/5 bg-surface/50 hover:bg-surface/80 p-2.5 transition-all text-xs"
+                className="group flex items-center justify-between rounded-xl border border-fg/5 bg-surface/50 hover:bg-surface/80 p-2.5 transition-all text-xs"
               >
                 <div className="flex flex-col min-w-0 flex-1 pr-3">
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9.5px] font-mono font-semibold text-cyan-300">
+                    <span className="rounded bg-fg/10 px-1.5 py-0.5 text-[9.5px] font-mono font-semibold text-accent">
                       {item.format}
                     </span>
                     <span className="text-[10px] text-muted font-mono">
@@ -622,9 +613,7 @@ export function ScannerTool() {
                       </span>
                     )}
                   </div>
-                  <div className="truncate font-mono text-[11.5px] text-fg mt-1">
-                    {item.text}
-                  </div>
+                  <div className="truncate font-mono text-[11.5px] text-fg mt-1">{item.text}</div>
                 </div>
 
                 <div className="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
@@ -632,15 +621,15 @@ export function ScannerTool() {
                     type="button"
                     onClick={() => handleOpenBrowser(item.text)}
                     title={item.isUrl ? "Buka Link" : "Cari di Google"}
-                    className="flex size-7 items-center justify-center rounded-lg hover:bg-white/10 text-cyan-300 transition-colors"
+                    className="flex size-7 items-center justify-center rounded-lg hover:bg-fg/10 text-accent transition-colors"
                   >
                     <ExternalLink className="size-3.5" />
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCopy(item)}
-                    title="Salin Teks"
-                    className="flex size-7 items-center justify-center rounded-lg hover:bg-white/10 text-subtle hover:text-fg transition-colors"
+                    title={t("tools.scanner.copy")}
+                    className="flex size-7 items-center justify-center rounded-lg hover:bg-fg/10 text-subtle hover:text-fg transition-colors"
                   >
                     {copiedId === item.id ? (
                       <Check className="size-3.5 text-ok" />
@@ -651,7 +640,7 @@ export function ScannerTool() {
                   <button
                     type="button"
                     onClick={() => handleDeleteHistory(item.id)}
-                    title="Hapus"
+                    title={t("common.delete")}
                     className="flex size-7 items-center justify-center rounded-lg hover:bg-live/15 hover:text-live text-muted transition-colors"
                   >
                     <Trash2 className="size-3.5" />

@@ -89,7 +89,7 @@ export function NotificationSection() {
       </SettingsRow>
 
       {/* Auto-dismiss duration slider */}
-      <div className="flex flex-col gap-2 rounded-2xl bg-surface/40 p-4 ring-1 ring-white/5">
+      <div className="flex flex-col gap-2 rounded-2xl bg-surface/40 p-4 ring-1 ring-fg/5">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-fg">
             {t("settings.notifications.duration", "Durasi Pop-up Pill")}
@@ -104,7 +104,7 @@ export function NotificationSection() {
           max={15}
           value={settings.autoDismissSeconds}
           onChange={(e) => void updateSettings({ autoDismissSeconds: Number(e.target.value) })}
-          className="accent-cyan-400"
+          className="accent-accent"
         />
         <p className="text-xs text-muted">
           {t(
@@ -115,7 +115,7 @@ export function NotificationSection() {
       </div>
 
       {/* Allowed Apps Whitelist */}
-      <div className="flex flex-col gap-3 rounded-2xl bg-surface/40 p-4 ring-1 ring-white/5">
+      <div className="flex flex-col gap-3 rounded-2xl bg-surface/40 p-4 ring-1 ring-fg/5">
         <div>
           <span className="text-sm font-medium text-fg">
             {t("settings.notifications.allowedApps", "Aplikasi Yang Diizinkan (Whitelist DND)")}
@@ -139,8 +139,8 @@ export function NotificationSection() {
                 onClick={() => handleToggleApp(app)}
                 className={`rounded-full px-3 py-1 text-xs font-medium transition-all flex items-center gap-1.5 ${
                   active
-                    ? "bg-cyan-500/20 text-cyan-200 ring-1 ring-cyan-400/40 shadow-sm"
-                    : "bg-surface/60 text-muted hover:text-subtle ring-1 ring-white/5"
+                    ? "bg-accent/20 text-accent ring-1 ring-accent/40 shadow-sm"
+                    : "bg-surface/60 text-muted hover:text-subtle ring-1 ring-fg/5"
                 }`}
               >
                 <span>{app}</span>
@@ -163,12 +163,12 @@ export function NotificationSection() {
               "settings.notifications.customAppPlaceholder",
               "Nama aplikasi lainnya...",
             )}
-            className="flex-1 rounded-xl bg-bg/80 px-3 py-1.5 text-xs text-fg placeholder:text-muted/60 ring-1 ring-white/10 focus:outline-none focus:ring-cyan-500/50"
+            className="flex-1 rounded-xl bg-bg/80 px-3 py-1.5 text-xs text-fg placeholder:text-muted/60 ring-1 ring-fg/10 focus:outline-none focus:ring-accent/50"
           />
           <button
             type="button"
             onClick={handleAddApp}
-            className="rounded-xl bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-200 px-3 py-1.5 text-xs font-medium ring-1 ring-cyan-500/30 transition-all"
+            className="rounded-xl bg-accent/30 hover:bg-accent/50 text-accent px-3 py-1.5 text-xs font-medium ring-1 ring-accent/30 transition-all"
           >
             {t("common.add", "Tambah")}
           </button>
@@ -176,7 +176,7 @@ export function NotificationSection() {
       </div>
 
       {/* Test simulation button */}
-      <div className="flex items-center justify-between rounded-2xl bg-surface/40 p-4 ring-1 ring-white/5">
+      <div className="flex items-center justify-between rounded-2xl bg-surface/40 p-4 ring-1 ring-fg/5">
         <div>
           <span className="text-sm font-medium text-fg">
             {t("settings.notifications.testTitle", "Uji Coba Notifikasi")}
@@ -198,7 +198,7 @@ export function NotificationSection() {
               "Halo, bagaimana progres fiturnya?",
             );
           }}
-          className="rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 px-4 py-2 text-xs font-medium ring-1 ring-cyan-500/40 transition-all shadow-sm"
+          className="rounded-xl bg-accent/20 hover:bg-accent/30 text-accent px-4 py-2 text-xs font-medium ring-1 ring-accent/40 transition-all shadow-sm"
         >
           {t("settings.notifications.sendTest", "Kirim Notifikasi")}
         </button>

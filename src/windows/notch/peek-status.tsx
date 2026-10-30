@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { motion } from "motion/react";
 import { events, ipc, type SystemStats } from "../../lib/ipc";
@@ -21,23 +22,24 @@ function formatGb(bytes: number | undefined): string {
 
 function getCpuColor(cpu: number): string {
   if (cpu >= 75) return "text-live";
-  if (cpu >= 50) return "text-amber-400";
+  if (cpu >= 50) return "text-warn";
   return "text-ok";
 }
 
 function getTempColor(temp: number): string {
   if (temp >= 80) return "text-live";
-  if (temp >= 65) return "text-amber-400";
+  if (temp >= 65) return "text-warn";
   return "text-ok";
 }
 
 function getRamColor(pct: number): string {
   if (pct >= 85) return "text-live";
-  if (pct >= 65) return "text-amber-400";
+  if (pct >= 65) return "text-warn";
   return "text-ok";
 }
 
 export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) {
+  const { t } = useTranslation();
   const { media, togglePlayPause, previous, next, seek } = useMediaStore();
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [isSeeking, setIsSeeking] = useState(false);
@@ -80,7 +82,7 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
       <div className="relative flex h-full w-full items-center justify-between px-5 text-fg select-none">
         {/* 1. Left: Album Cover + Title + Artist */}
         <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
-          <div className="relative size-10 shrink-0 overflow-hidden rounded-[10px] bg-surface ring-1 ring-white/15 shadow-sm">
+          <div className="relative size-10 shrink-0 overflow-hidden rounded-[10px] bg-surface ring-1 ring-fg/15 shadow-sm">
             {media.coverUrl ? (
               <img src={media.coverUrl} alt="" className="size-full object-cover" />
             ) : (
@@ -111,8 +113,8 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
               e.stopPropagation();
               void previous();
             }}
-            title="Previous track"
-            className="flex size-8 items-center justify-center rounded-full text-muted hover:text-fg hover:bg-white/10 active:scale-90 transition-all"
+            title={t("music.previous")}
+            className="flex size-8 items-center justify-center rounded-full text-muted hover:text-fg hover:bg-fg/10 active:scale-90 transition-all"
           >
             <PrevIconSmall />
           </button>
@@ -124,8 +126,8 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
               void togglePlayPause();
             }}
             title={media.isPlaying ? "Pause" : "Play"}
-            className="flex size-10 items-center justify-center rounded-full text-slate-950 hover:brightness-110 active:scale-90 transition-all shadow-md font-bold"
-            style={{ backgroundColor: "var(--notch-accent, #f59e0b)" }}
+            className="flex size-10 items-center justify-center rounded-full text-bg hover:brightness-110 active:scale-90 transition-all shadow-md font-bold"
+            style={{ backgroundColor: "var(--color-accent)" }}
           >
             {media.isPlaying ? <PauseIconSmall /> : <PlayIconSmall />}
           </button>
@@ -136,8 +138,8 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
               e.stopPropagation();
               void next();
             }}
-            title="Next track"
-            className="flex size-8 items-center justify-center rounded-full text-muted hover:text-fg hover:bg-white/10 active:scale-90 transition-all"
+            title={t("music.next")}
+            className="flex size-8 items-center justify-center rounded-full text-muted hover:text-fg hover:bg-fg/10 active:scale-90 transition-all"
           >
             <NextIconSmall />
           </button>
@@ -167,7 +169,7 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
                 media.isPlaying ? { duration: 1.0, repeat: Infinity, ease: "easeInOut" } : {}
               }
               className="w-[2px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
             <motion.span
               animate={
@@ -181,7 +183,7 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
                   : {}
               }
               className="w-[2px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
             <motion.span
               animate={
@@ -195,7 +197,7 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
                   : {}
               }
               className="w-[2px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
             <motion.span
               animate={
@@ -209,26 +211,26 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
                   : {}
               }
               className="w-[2px] rounded-full"
-              style={{ backgroundColor: "var(--notch-accent, #22d3ee)" }}
+              style={{ backgroundColor: "var(--color-accent)" }}
             />
           </div>
 
           {visibleInCapture && (
             <span
               className="ml-0.5 size-1.5 shrink-0 rounded-full bg-live animate-pulse"
-              title="Visible in screen capture"
+              title={t("notch.visibleInCapture")}
             />
           )}
         </div>
 
         {/* 4. Bottom: Interactive Progress Bar Scrubber */}
         <div className="absolute inset-x-6 bottom-2 flex items-center h-2 group">
-          <div className="h-[2.5px] w-full rounded-full bg-white/10 group-hover:h-[4px] transition-all overflow-hidden">
+          <div className="h-[2.5px] w-full rounded-full bg-fg/10 group-hover:h-[4px] transition-all overflow-hidden">
             <div
               className="h-full rounded-full"
               style={{
                 width: `${progressPercent}%`,
-                background: "var(--notch-accent, #f59e0b)",
+                background: "var(--color-accent)",
               }}
             />
           </div>
@@ -337,7 +339,7 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
         ) : (
           <div className="flex items-center gap-1 rounded-full bg-surface/80 px-2 py-0.5 text-[10px] font-medium text-ok border border-elevated/60">
             <Check className="size-3 text-ok shrink-0 stroke-[2.5]" />
-            <span>Optimal</span>
+            <span>{t("notch.optimal")}</span>
           </div>
         )}
       </div>
@@ -346,12 +348,12 @@ export function PeekStatus({ visibleInCapture }: { visibleInCapture: boolean }) 
       {visibleInCapture ? (
         <span
           className="ml-1 size-2 shrink-0 rounded-full bg-live animate-pulse"
-          title="Visible in screen capture"
+          title={t("notch.visibleInCapture")}
         />
       ) : (
         <span
           className="ml-1 size-1.5 shrink-0 rounded-full bg-ok/80"
-          title="Hidden from screen capture"
+          title={t("notch.hiddenFromCapture")}
         />
       )}
     </div>

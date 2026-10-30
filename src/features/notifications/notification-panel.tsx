@@ -62,13 +62,13 @@ export function NotificationPanel() {
   return (
     <div className="flex h-full flex-col select-none">
       {/* Header with DND toggle, Filter, and Clear */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+      <div className="flex items-center justify-between pb-3 border-b border-fg/[0.08]">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-fg">
             {t("notifications.title", "Notifikasi")}
           </span>
           {notifications.length > 0 && (
-            <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold text-subtle ring-1 ring-white/10">
+            <span className="rounded-full bg-surface px-2 py-0.5 text-[10px] font-semibold text-subtle ring-1 ring-fg/10">
               {notifications.length}
             </span>
           )}
@@ -92,8 +92,8 @@ export function NotificationPanel() {
             }
             className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all ${
               settings.dndEnabled
-                ? "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/40 shadow-sm"
-                : "bg-surface/60 text-subtle hover:bg-surface hover:text-fg ring-1 ring-white/5"
+                ? "bg-accent/20 text-accent ring-1 ring-accent/40 shadow-sm"
+                : "bg-surface/60 text-subtle hover:bg-surface hover:text-fg ring-1 ring-fg/5"
             }`}
           >
             <MoonIcon />
@@ -114,8 +114,8 @@ export function NotificationPanel() {
             title={t("notifications.filterApps", "Kelola Aplikasi Diizinkan")}
             className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all ${
               filterModalOpen
-                ? "bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-500/40"
-                : "bg-surface/60 text-subtle hover:bg-surface hover:text-fg ring-1 ring-white/5"
+                ? "bg-accent/20 text-accent ring-1 ring-accent/40"
+                : "bg-surface/60 text-subtle hover:bg-surface hover:text-fg ring-1 ring-fg/5"
             }`}
           >
             <ShieldCheckIcon />
@@ -130,7 +130,7 @@ export function NotificationPanel() {
                 event.stopPropagation();
                 void clearAll();
               }}
-              className="flex items-center justify-center rounded-full p-1.5 text-muted hover:bg-white/10 hover:text-live transition-colors"
+              className="flex items-center justify-center rounded-full p-1.5 text-muted hover:bg-fg/10 hover:text-live transition-colors"
               title={t("notifications.clearAll", "Hapus Semua")}
             >
               <TrashIcon />
@@ -146,7 +146,7 @@ export function NotificationPanel() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-b border-white/[0.08] bg-surface/40 backdrop-blur-md px-3 py-3 rounded-xl mt-2"
+            className="overflow-hidden border-b border-fg/[0.08] bg-surface/40 backdrop-blur-md px-3 py-3 rounded-xl mt-2"
           >
             <div className="flex items-center justify-between pb-2">
               <span className="text-xs font-medium text-fg">
@@ -173,8 +173,8 @@ export function NotificationPanel() {
                     }}
                     className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-all flex items-center gap-1 ${
                       active
-                        ? "bg-cyan-500/20 text-cyan-200 ring-1 ring-cyan-400/40"
-                        : "bg-surface/80 text-muted hover:text-subtle ring-1 ring-white/5"
+                        ? "bg-accent/20 text-accent ring-1 ring-accent/40"
+                        : "bg-surface/80 text-muted hover:text-subtle ring-1 ring-fg/5"
                     }`}
                   >
                     <span>{app}</span>
@@ -198,7 +198,7 @@ export function NotificationPanel() {
                   "notifications.addAppPlaceholder",
                   "Tambah nama aplikasi lain (Enter)...",
                 )}
-                className="flex-1 rounded-lg bg-bg/80 px-2.5 py-1 text-xs text-fg placeholder:text-muted/60 ring-1 ring-white/10 focus:outline-none focus:ring-cyan-500/50"
+                className="flex-1 rounded-lg bg-bg/80 px-2.5 py-1 text-xs text-fg placeholder:text-muted/60 ring-1 ring-fg/10 focus:outline-none focus:ring-accent/50"
               />
               <button
                 type="button"
@@ -206,7 +206,7 @@ export function NotificationPanel() {
                   event.stopPropagation();
                   handleAddCustomApp();
                 }}
-                className="rounded-lg bg-cyan-600/30 hover:bg-cyan-600/50 text-cyan-200 px-2.5 py-1 text-xs font-medium ring-1 ring-cyan-500/30 transition-all"
+                className="rounded-lg bg-accent/30 hover:bg-accent/50 text-accent px-2.5 py-1 text-xs font-medium ring-1 ring-accent/30 transition-all"
               >
                 {t("common.add", "Tambah")}
               </button>
@@ -219,7 +219,7 @@ export function NotificationPanel() {
       <div className="flex-1 overflow-y-auto pt-2 space-y-2 pr-1 custom-scrollbar">
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-center px-4">
-            <div className="size-11 rounded-full bg-surface/60 flex items-center justify-center text-muted ring-1 ring-white/5 mb-2">
+            <div className="size-11 rounded-full bg-surface/60 flex items-center justify-center text-muted ring-1 ring-fg/5 mb-2">
               <BellOffIcon />
             </div>
             <p className="text-xs font-medium text-fg/80">
@@ -243,7 +243,7 @@ export function NotificationPanel() {
                   "Halo! Dokumen proposal sudah siap dikirim ya.",
                 );
               }}
-              className="mt-3.5 inline-flex items-center gap-1.5 rounded-full bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 px-3 py-1 text-xs font-medium ring-1 ring-cyan-500/30 transition-all"
+              className="mt-3.5 inline-flex items-center gap-1.5 rounded-full bg-accent/15 hover:bg-accent/25 text-accent px-3 py-1 text-xs font-medium ring-1 ring-accent/30 transition-all"
             >
               <SparklesIcon />
               <span>{t("notifications.testSimulate", "Kirim Notifikasi Uji Coba")}</span>
@@ -265,7 +265,7 @@ export function NotificationPanel() {
 
       {/* Footer simulation shortcuts if notifications exist */}
       {notifications.length > 0 && (
-        <div className="mt-2 pt-2 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-muted">
+        <div className="mt-2 pt-2 border-t border-fg/[0.06] flex items-center justify-between text-[11px] text-muted">
           <span>{t("notifications.clickToOpenHint", "Klik kartu untuk membuka aplikasi")}</span>
           <button
             type="button"
@@ -277,7 +277,7 @@ export function NotificationPanel() {
                 "Server update scheduled for 22:00 UTC.",
               );
             }}
-            className="text-cyan-400 hover:text-cyan-300 transition-colors"
+            className="text-accent hover:text-accent transition-colors"
           >
             + {t("notifications.testAnother", "Uji Coba Lain")}
           </button>
@@ -308,7 +308,7 @@ function NotificationCard({ notification, onOpenApp, onDismiss }: NotificationCa
         e.stopPropagation();
         onOpenApp();
       }}
-      className="group relative flex items-start gap-3 rounded-2xl bg-surface/50 hover:bg-surface/80 p-3 ring-1 ring-white/5 hover:ring-white/10 transition-all cursor-pointer"
+      className="group relative flex items-start gap-3 rounded-2xl bg-surface/50 hover:bg-surface/80 p-3 ring-1 ring-fg/5 hover:ring-fg/10 transition-all cursor-pointer"
     >
       {/* App badge icon */}
       <AppIcon
@@ -343,7 +343,7 @@ function NotificationCard({ notification, onOpenApp, onDismiss }: NotificationCa
             onOpenApp();
           }}
           title={t("notifications.openApp", "Buka Aplikasi")}
-          className="rounded-full p-1.5 text-subtle hover:bg-white/10 hover:text-fg transition-colors"
+          className="rounded-full p-1.5 text-subtle hover:bg-fg/10 hover:text-fg transition-colors"
         >
           <ExternalLinkIcon />
         </button>
@@ -355,7 +355,7 @@ function NotificationCard({ notification, onOpenApp, onDismiss }: NotificationCa
             onDismiss();
           }}
           title={t("notifications.dismiss", "Hapus")}
-          className="rounded-full p-1.5 text-muted hover:bg-white/10 hover:text-live transition-colors"
+          className="rounded-full p-1.5 text-muted hover:bg-fg/10 hover:text-live transition-colors"
         >
           <CloseIconSmall />
         </button>
