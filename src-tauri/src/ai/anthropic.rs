@@ -62,9 +62,19 @@ fn body(cfg: &ProviderConfig, req: &AnswerRequest<'_>) -> Value {
 }
 
 fn with_auth(builder: RequestBuilder, cfg: &ProviderConfig) -> RequestBuilder {
-    builder
-        .header("x-api-key", cfg.key().unwrap_or_default())
-        .header("anthropic-version", API_VERSION)
+    let builder = builder.header("anthropic-version", API_VERSION);
+    if cfg.oauth {
+        // Subscription login: a Bearer OAuth token, not a pasted API key. The
+        // OAuth beta is required for the token to be accepted.
+        builder
+            .header(
+                "authorization",
+                format!("Bearer {}", cfg.key().unwrap_or_default()),
+            )
+            .header("anthropic-beta", super::oauth::claude::OAUTH_BETA)
+    } else {
+        builder.header("x-api-key", cfg.key().unwrap_or_default())
+    }
 }
 
 impl Provider for Anthropic {

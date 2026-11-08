@@ -56,7 +56,9 @@
     "openai": "OpenAI",
     "gemini": "Google Gemini",
     "ollama": "Ollama (lokal)",
-    "openai_compatible": "OpenAI-compatible"
+    "openai_compatible": "OpenAI-compatible",
+    "codex": "Codex / ChatGPT (langganan)",
+    "antigravity": "Antigravity / Gemini (langganan)"
   },
   "errors": {
     "no_key": "Belum ada API key. Tambahkan di Pengaturan → AI.",
@@ -76,7 +78,9 @@
     "hotkey_unavailable": "Pintasan itu sudah dipakai aplikasi lain.",
     "storage": "Penyimpanan lokal gagal.",
     "internal": "Terjadi kesalahan.",
-    "update_failed": "Gagal memperbarui. Periksa koneksi lalu coba lagi."
+    "update_failed": "Gagal memperbarui. Periksa koneksi lalu coba lagi.",
+    "login_failed": "Login gagal. Coba lagi.",
+    "browser_failed": "Tidak bisa membuka browser. Buka URL-nya manual."
   },
   "settings": {
     "title": "Pengaturan",
@@ -125,7 +129,15 @@
       "captureModeScreen": "Layar",
       "captureModeWindow": "Jendela aktif",
       "history": "Simpan riwayat jawaban",
-      "historyHint": "Hanya teks, tersimpan lokal. Tangkapan layar tidak pernah disimpan."
+      "historyHint": "Hanya teks, tersimpan lokal. Tangkapan layar tidak pernah disimpan.",
+      "login": "Masuk",
+      "loginHint": "Login ke akun langgananmu lewat browser. Tidak perlu API key.",
+      "loggingIn": "Menunggu login di browser…",
+      "loggedIn": "Tersambung sebagai {{account}}",
+      "logout": "Keluar",
+      "relogin": "Login ulang",
+      "loginDone": "Tersambung.",
+      "devicePrompt": "Buka {{url}} di browser dan masukkan kode: {{code}}"
     },
     "hotkeys": {
       "title": "Pintasan",

@@ -81,6 +81,8 @@ pub fn run() {
             commands::provider_update,
             commands::provider_set_key,
             commands::provider_delete_key,
+            commands::provider_login,
+            commands::provider_logout,
             commands::provider_test,
             commands::autostart_set,
             commands::auto_hide_update,

@@ -47,7 +47,8 @@ export interface AppStatus {
 export type CaptureTarget = "screen" | "window";
 
 /** Mirrors `ProviderId` in src-tauri/src/ai/mod.rs. */
-export type ProviderId = "anthropic" | "openai" | "gemini" | "ollama" | "openai_compatible";
+export type ProviderId =
+  "anthropic" | "openai" | "gemini" | "ollama" | "openai_compatible" | "codex" | "antigravity";
 
 /** Mirrors `KeyPolicy` in src-tauri/src/ai/mod.rs. */
 export type KeyPolicy = "required" | "optional" | "none";
@@ -82,6 +83,12 @@ export type AiEvent =
   | { type: "cancelled" }
   | { type: "error"; error: AppError };
 
+/** Mirrors `LoginEvent` in src-tauri/src/ai/oauth/mod.rs. */
+export type ProviderLoginEvent =
+  | { type: "browserOpened" }
+  | { type: "deviceCode"; verificationUrl: string; userCode: string }
+  | { type: "loggedIn"; accountLabel: string | null };
+
 /** Mirrors `ProviderView` in src-tauri/src/commands.rs. */
 export interface ProviderView {
   id: ProviderId;
@@ -92,6 +99,12 @@ export interface ProviderView {
   defaultModel: string;
   baseUrl: string | null;
   baseUrlEditable: boolean;
+  /** Whether the provider supports subscription login (OAuth). */
+  supportsLogin: boolean;
+  /** Whether a subscription login is currently signed in. */
+  loggedIn: boolean;
+  /** The signed-in account label (email), never a token. */
+  accountLabel: string | null;
 }
 
 export interface AppNotification {
@@ -292,6 +305,13 @@ export const ipc = {
     invoke<SettingsView>("provider_set_key", { id, key }),
   providerDeleteKey: (id: ProviderId) => invoke<SettingsView>("provider_delete_key", { id }),
   providerTest: (id: ProviderId) => invoke<string[]>("provider_test", { id }),
+  /** Subscription login: opens the browser for OAuth, or runs the device flow. */
+  providerLogin: (id: ProviderId) =>
+    invoke<string>("provider_login", { id, onEvent: new Channel<ProviderLoginEvent>() }),
+  /** Same as `providerLogin` but lets the caller react to device-code events. */
+  providerLoginWithEvents: (id: ProviderId, onEvent: (event: ProviderLoginEvent) => void) =>
+    invoke<string>("provider_login", { id, onEvent: new Channel<ProviderLoginEvent>(onEvent) }),
+  providerLogout: (id: ProviderId) => invoke<SettingsView>("provider_logout", { id }),
   autostartSet: (enabled: boolean) => invoke<SettingsView>("autostart_set", { enabled }),
   autoHideUpdate: (settings: AutoHideSettings) =>
     invoke<SettingsView>("auto_hide_update", { settings }),

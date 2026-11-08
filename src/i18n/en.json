@@ -56,7 +56,9 @@
     "openai": "OpenAI",
     "gemini": "Google Gemini",
     "ollama": "Ollama (local)",
-    "openai_compatible": "OpenAI-compatible"
+    "openai_compatible": "OpenAI-compatible",
+    "codex": "Codex / ChatGPT (subscription)",
+    "antigravity": "Antigravity / Gemini (subscription)"
   },
   "errors": {
     "no_key": "No API key saved yet. Add it in Settings → AI.",
@@ -76,7 +78,9 @@
     "hotkey_unavailable": "That hotkey is already used by another app.",
     "storage": "Local storage failed.",
     "internal": "Something went wrong.",
-    "update_failed": "Could not update. Check your connection and try again."
+    "update_failed": "Could not update. Check your connection and try again.",
+    "login_failed": "Sign-in failed. Try again.",
+    "browser_failed": "Could not open the browser. Open the URL manually."
   },
   "settings": {
     "title": "Settings",
@@ -125,7 +129,15 @@
       "captureModeScreen": "Screen",
       "captureModeWindow": "Active window",
       "history": "Save answer history",
-      "historyHint": "Text only, stored locally. Screenshots are never saved."
+      "historyHint": "Text only, stored locally. Screenshots are never saved.",
+      "login": "Sign in",
+      "loginHint": "Sign in to your subscription account via the browser. No API key needed.",
+      "loggingIn": "Waiting for sign-in in the browser…",
+      "loggedIn": "Connected as {{account}}",
+      "logout": "Sign out",
+      "relogin": "Sign in again",
+      "loginDone": "Connected.",
+      "devicePrompt": "Open {{url}} in your browser and enter the code: {{code}}"
     },
     "hotkeys": {
       "title": "Hotkeys",

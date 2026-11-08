@@ -14,7 +14,7 @@ use tauri::{AppHandle, Manager, Runtime, ipc::Channel};
 use tokio_util::sync::CancellationToken;
 
 use super::prompts::{self, AnswerKind, MAX_TOKENS, UiLanguage};
-use super::{AnswerRequest, ImageData, KeyPolicy, ProviderConfig, ProviderId, Role, Turn};
+use super::{AnswerRequest, ImageData, KeyPolicy, ProviderConfig, ProviderId, Role, Turn, oauth};
 use crate::capture::{self, CaptureTarget, encode};
 use crate::error::{AppError, AppResult};
 use crate::state::AppState;
@@ -221,12 +221,35 @@ pub(crate) fn provider_config<R: Runtime>(
         base_url,
         model: settings.model(id),
         api_key,
+        oauth: false,
     })
 }
 
-fn answer_config<R: Runtime>(app: &AppHandle<R>) -> AppResult<ProviderConfig> {
+/// Builds a provider config, refreshing an OAuth token first if it is stale.
+///
+/// `provider_config` stays synchronous (it reads the cached token); this adds
+/// the one await the login flow needs. Subscription providers authenticate by
+/// login, so their `api_key` slot carries the OAuth access token.
+pub(crate) async fn resolve_config<R: Runtime>(
+    app: &AppHandle<R>,
+    id: ProviderId,
+) -> AppResult<ProviderConfig> {
+    if id.supports_login() && oauth::has_tokens(id) {
+        // Subscription login: the OAuth access token (refreshed here if stale)
+        // rides in the `api_key` slot as a Bearer credential.
+        let token = oauth::access_token(app, id).await?;
+        let mut cfg = provider_config(app, id)?;
+        cfg.api_key = Some(token);
+        cfg.oauth = true;
+        return Ok(cfg);
+    }
+    provider_config(app, id)
+}
+
+/// Builds the config for an answer, refreshing an OAuth token if needed.
+async fn answer_config<R: Runtime>(app: &AppHandle<R>) -> AppResult<ProviderConfig> {
     let id = app.state::<SettingsState>().get().ai.provider;
-    let cfg = provider_config(app, id)?;
+    let cfg = resolve_config(app, id).await?;
     if cfg.model.is_empty() {
         return Err(AppError::InvalidInput("choose a model in Settings".into()));
     }
@@ -234,7 +257,7 @@ fn answer_config<R: Runtime>(app: &AppHandle<R>) -> AppResult<ProviderConfig> {
 }
 
 /// Captures the screen and streams a fresh answer. Replaces any earlier session.
-pub(crate) fn answer<R: Runtime>(
+pub(crate) async fn answer<R: Runtime>(
     app: &AppHandle<R>,
     target: CaptureTarget,
     lang: UiLanguage,
@@ -242,7 +265,7 @@ pub(crate) fn answer<R: Runtime>(
 ) -> AppResult<u64> {
     ensure_active(app)?;
     // Fail before capturing if the provider is not set up.
-    let cfg = answer_config(app)?;
+    let cfg = answer_config(app).await?;
     let state = app.state::<AiState>();
 
     let (session_id, run_id, cancel) = {
@@ -273,7 +296,7 @@ pub(crate) fn answer<R: Runtime>(
 }
 
 /// Asks a follow-up about the same screenshot.
-pub(crate) fn followup<R: Runtime>(
+pub(crate) async fn followup<R: Runtime>(
     app: &AppHandle<R>,
     session_id: u64,
     text: &str,
@@ -286,7 +309,7 @@ pub(crate) fn followup<R: Runtime>(
             "follow-up must be 1–4000 characters".into(),
         ));
     }
-    let cfg = answer_config(app)?;
+    let cfg = answer_config(app).await?;
     let text = text.to_owned();
     start_run(app, session_id, cfg, channel, false, move |session| {
         if session.image.is_none() {
@@ -303,13 +326,13 @@ pub(crate) fn followup<R: Runtime>(
 
 /// Re-runs the last request: the failed one if there is one, otherwise the
 /// last completed exchange. Recaptures if the screenshot never arrived.
-pub(crate) fn retry<R: Runtime>(
+pub(crate) async fn retry<R: Runtime>(
     app: &AppHandle<R>,
     session_id: u64,
     channel: Channel<AiEvent>,
 ) -> AppResult<u64> {
     ensure_active(app)?;
-    let cfg = answer_config(app)?;
+    let cfg = answer_config(app).await?;
     start_run(app, session_id, cfg, channel, true, |session| {
         if session.image.is_none() {
             return Ok(Step::Capture);

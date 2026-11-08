@@ -6,7 +6,10 @@
 //! a line in [`ProviderId::provider`].
 
 mod anthropic;
+mod antigravity;
+mod codex;
 mod gemini;
+pub(crate) mod oauth;
 mod ollama;
 mod openai;
 pub(crate) mod prompts;
@@ -41,6 +44,10 @@ pub enum ProviderId {
     Gemini,
     Ollama,
     OpenaiCompatible,
+    /// ChatGPT subscription (Codex OAuth), served by the OpenAI Responses wire.
+    Codex,
+    /// Google Antigravity subscription, served by the Gemini generateContent wire.
+    Antigravity,
 }
 
 /// Whether a provider needs an API key. Mirrored in `src/lib/ipc.ts`.
@@ -53,12 +60,14 @@ pub enum KeyPolicy {
 }
 
 impl ProviderId {
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 7] = [
         Self::Anthropic,
         Self::Openai,
         Self::Gemini,
         Self::Ollama,
         Self::OpenaiCompatible,
+        Self::Codex,
+        Self::Antigravity,
     ];
 
     pub const fn as_str(self) -> &'static str {
@@ -68,6 +77,8 @@ impl ProviderId {
             Self::Gemini => "gemini",
             Self::Ollama => "ollama",
             Self::OpenaiCompatible => "openai_compatible",
+            Self::Codex => "codex",
+            Self::Antigravity => "antigravity",
         }
     }
 
@@ -76,7 +87,14 @@ impl ProviderId {
             Self::Anthropic | Self::Openai | Self::Gemini => KeyPolicy::Required,
             Self::OpenaiCompatible => KeyPolicy::Optional,
             Self::Ollama => KeyPolicy::None,
+            // Subscription providers authenticate by login, not a pasted key.
+            Self::Codex | Self::Antigravity => KeyPolicy::None,
         }
+    }
+
+    /// Whether the provider supports subscription login (OAuth).
+    pub const fn supports_login(self) -> bool {
+        matches!(self, Self::Anthropic | Self::Codex | Self::Antigravity)
     }
 
     /// Defaults are only fallbacks; users pick models in Settings.
@@ -90,6 +108,8 @@ impl ProviderId {
             Self::Gemini => "gemini-flash-latest",
             Self::Ollama => "gemma3",
             Self::OpenaiCompatible => "",
+            Self::Codex => "gpt-5.1-codex",
+            Self::Antigravity => "gemini-2.5-pro",
         }
     }
 
@@ -100,6 +120,8 @@ impl ProviderId {
             Self::Gemini => Some("https://generativelanguage.googleapis.com/v1beta"),
             Self::Ollama => Some("http://localhost:11434"),
             Self::OpenaiCompatible => None,
+            Self::Codex => Some("https://chatgpt.com/backend-api"),
+            Self::Antigravity => Some("https://daily-cloudcode-pa.googleapis.com"),
         }
     }
 
@@ -116,6 +138,8 @@ impl ProviderId {
             Self::OpenaiCompatible => &openai::OpenAi { official: false },
             Self::Gemini => &gemini::Gemini,
             Self::Ollama => &ollama::Ollama,
+            Self::Codex => &codex::Codex,
+            Self::Antigravity => &antigravity::Antigravity,
         }
     }
 }
@@ -128,6 +152,9 @@ pub struct ProviderConfig {
     pub base_url: String,
     pub model: String,
     pub api_key: Option<String>,
+    /// True when `api_key` carries an OAuth access token (subscription login)
+    /// rather than a pasted API key; selects Bearer auth + the OAuth beta.
+    pub oauth: bool,
 }
 
 // Hand-written so the key can never end up in a log line (rule 5).
@@ -511,6 +538,7 @@ pub(crate) mod test_support {
                 .to_owned(),
             model: "test-model".into(),
             api_key: Some("sk-test-123".into()),
+            oauth: false,
         }
     }
 
@@ -585,7 +613,9 @@ mod tests {
                 "openai",
                 "gemini",
                 "ollama",
-                "openai_compatible"
+                "openai_compatible",
+                "codex",
+                "antigravity"
             ]
         );
         for id in ProviderId::ALL {

@@ -4,6 +4,21 @@ Semua perubahan penting OnesNotch dicatat di sini. Format mengikuti
 [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/) dan versi mengikuti
 [Semantic Versioning](https://semver.org/lang/id/).
 
+## [0.3.0] - 2026-11-08
+
+### Ditambahkan
+
+- **Login provider langganan**: masuk ke Claude Code, Codex (ChatGPT), dan Antigravity (Gemini) memakai akun langganan yang sudah Anda bayar — tanpa menempel API key. Cukup klik **Masuk** di Settings → AI, selesaikan login di browser (atau masukkan kode perangkat untuk Codex), dan Notch langsung tersambung.
+  - Claude Code: login lewat browser (PKCE).
+  - Codex: alur kode perangkat — buka URL, ketik kode yang tampil di Notch.
+  - Antigravity: login Google lewat browser.
+- Status koneksi per provider ("Tersambung sebagai {email}") dan tombol **Keluar** untuk berpindah akun.
+
+### Keamanan
+
+- Token langganan hanya disimpan di Rust (Windows Credential Manager) dan tidak pernah dikirim ke antarmuka web.
+- Validasi `state` OAuth diperketat: server callback memakai `state` yang sama dengan URL otorisasi, sehingga redirect palsu ditolak.
+
 ## [0.2.0] - 2026-10-30
 
 ### Ditambahkan
@@ -27,5 +42,6 @@ Semua perubahan penting OnesNotch dicatat di sini. Format mengikuti
 
 - Rilis awal: notch Dynamic Island, jawaban AI dari layar, kontrol media, notifikasi, dan tools.
 
+[0.3.0]: https://github.com/onesyah05/OnesNotch/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/onesyah05/OnesNotch/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/onesyah05/OnesNotch/releases/tag/v0.1.1

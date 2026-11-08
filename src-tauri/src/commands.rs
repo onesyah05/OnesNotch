@@ -6,6 +6,7 @@ use tauri::{AppHandle, Emitter, Manager, Runtime, State, ipc::Channel};
 use crate::{
     ai::{
         self, KeyPolicy, ProviderId,
+        oauth::{self, LoginEvent},
         prompts::UiLanguage,
         session::{self, AiEvent, AiState},
     },
@@ -76,6 +77,12 @@ pub struct ProviderView {
     pub default_model: &'static str,
     pub base_url: Option<String>,
     pub base_url_editable: bool,
+    /// Whether the provider supports subscription login (OAuth).
+    pub supports_login: bool,
+    /// Whether a subscription login is currently signed in.
+    pub logged_in: bool,
+    /// The signed-in account label (email), never a token.
+    pub account_label: Option<String>,
 }
 
 /// Fields the settings UI can change in one call. Missing fields stay as they are.
@@ -150,14 +157,23 @@ fn show_window<R: Runtime>(app: &AppHandle<R>, label: &str) {
 fn settings_view(settings: &Settings) -> SettingsView {
     let providers = ProviderId::ALL
         .into_iter()
-        .map(|id| ProviderView {
-            id,
-            key_policy: id.key_policy(),
-            has_key: id.key_policy() != KeyPolicy::None && keys::has(id),
-            model: settings.prefs(id).model,
-            default_model: id.default_model(),
-            base_url: settings.base_url(id),
-            base_url_editable: id.base_url_editable(),
+        .map(|id| {
+            let account = oauth::load_tokens(id)
+                .ok()
+                .flatten()
+                .and_then(|t| t.account_label);
+            ProviderView {
+                id,
+                key_policy: id.key_policy(),
+                has_key: id.key_policy() != KeyPolicy::None && keys::has(id),
+                model: settings.prefs(id).model,
+                default_model: id.default_model(),
+                base_url: settings.base_url(id),
+                base_url_editable: id.base_url_editable(),
+                supports_login: id.supports_login(),
+                logged_in: oauth::has_tokens(id),
+                account_label: account,
+            }
         })
         .collect();
     SettingsView {
@@ -391,28 +407,32 @@ pub fn get_system_stats(
 // ---------------------------------------------------------------------------
 
 #[tauri::command]
-pub fn ai_answer(
+pub async fn ai_answer(
     app: AppHandle,
     target: CaptureTarget,
     lang: UiLanguage,
     on_event: Channel<AiEvent>,
 ) -> AppResult<u64> {
-    session::answer(&app, target, lang, on_event)
+    session::answer(&app, target, lang, on_event).await
 }
 
 #[tauri::command]
-pub fn ai_followup(
+pub async fn ai_followup(
     app: AppHandle,
     session_id: u64,
     text: String,
     on_event: Channel<AiEvent>,
 ) -> AppResult<u64> {
-    session::followup(&app, session_id, &text, on_event)
+    session::followup(&app, session_id, &text, on_event).await
 }
 
 #[tauri::command]
-pub fn ai_retry(app: AppHandle, session_id: u64, on_event: Channel<AiEvent>) -> AppResult<u64> {
-    session::retry(&app, session_id, on_event)
+pub async fn ai_retry(
+    app: AppHandle,
+    session_id: u64,
+    on_event: Channel<AiEvent>,
+) -> AppResult<u64> {
+    session::retry(&app, session_id, on_event).await
 }
 
 #[tauri::command]
@@ -571,10 +591,47 @@ pub fn provider_delete_key(app: AppHandle, id: ProviderId) -> AppResult<Settings
     ))
 }
 
+/// Starts a subscription login for `id`, streaming progress to the UI.
+///
+/// Browser flows open the system browser and wait on a loopback port; device
+/// flows report a URL + code to approve. The command resolves once the account
+/// is signed in; tokens stay in Rust (rule 5).
+#[tauri::command]
+pub async fn provider_login(
+    app: AppHandle,
+    id: ProviderId,
+    on_event: Channel<LoginEvent>,
+) -> AppResult<SettingsView> {
+    if !id.supports_login() {
+        return Err(AppError::InvalidInput(
+            "this provider does not support subscription login".into(),
+        ));
+    }
+    oauth::login(&app, id, move |event| {
+        // A closed settings window just means nobody is watching; ignore it.
+        let _ = on_event.send(event);
+    })
+    .await?;
+    Ok(broadcast_settings(
+        &app,
+        &app.state::<SettingsState>().get(),
+    ))
+}
+
+/// Signs out of a subscription login.
+#[tauri::command]
+pub fn provider_logout(app: AppHandle, id: ProviderId) -> AppResult<SettingsView> {
+    oauth::delete_tokens(id)?;
+    Ok(broadcast_settings(
+        &app,
+        &app.state::<SettingsState>().get(),
+    ))
+}
+
 /// "Test connection": lists the provider's models with the saved URL and key.
 #[tauri::command]
 pub async fn provider_test(app: AppHandle, id: ProviderId) -> AppResult<Vec<String>> {
-    let cfg = session::provider_config(&app, id)?;
+    let cfg = session::resolve_config(&app, id).await?;
     let http = app.state::<AiState>().http().clone();
     Ok(ai::list_models(&http, &cfg).await?)
 }

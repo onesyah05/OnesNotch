@@ -7,6 +7,7 @@ import {
   type AppError,
   type CaptureTarget,
   type ProviderId,
+  type ProviderLoginEvent,
   type ProviderView,
 } from "../../lib/ipc";
 import { useSettingsStore } from "../../stores/useSettingsStore";
@@ -126,6 +127,8 @@ function ProviderConfig({
 
   return (
     <div className="flex flex-col gap-2">
+      {provider.supportsLogin && <LoginRow provider={provider} run={run} busy={busy} />}
+
       {provider.keyPolicy !== "none" && <KeyRow provider={provider} run={run} />}
 
       {provider.baseUrlEditable && <BaseUrlRow provider={provider} run={run} />}
@@ -172,6 +175,59 @@ function KeyRow({ provider, run }: { provider: ProviderView; run: Run }) {
           {t("settings.ai.deleteKey")}
         </RowButton>
       )}
+    </SettingsRow>
+  );
+}
+
+function LoginRow({ provider, run, busy }: { provider: ProviderView; run: Run; busy: boolean }) {
+  const { t } = useTranslation();
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [device, setDevice] = useState<string | null>(null);
+
+  const login = () => {
+    if (busy || loggingIn) return;
+    setLoggingIn(true);
+    setDevice(null);
+    void run(() =>
+      ipc
+        .providerLoginWithEvents(provider.id, (event: ProviderLoginEvent) => {
+          if (event.type === "deviceCode") {
+            setDevice(
+              t("settings.ai.devicePrompt", { url: event.verificationUrl, code: event.userCode }),
+            );
+          }
+        })
+        .then(() => {
+          setLoggingIn(false);
+          setDevice(null);
+        }),
+    );
+  };
+
+  return (
+    <SettingsRow
+      label={t("settings.ai.login")}
+      hint={
+        loggingIn
+          ? t("settings.ai.loggingIn")
+          : provider.loggedIn
+            ? t("settings.ai.loggedIn", { account: provider.accountLabel ?? "" })
+            : t("settings.ai.loginHint")
+      }
+    >
+      {loggingIn ? (
+        <span className="text-xs text-subtle">{t("settings.ai.loggingIn")}</span>
+      ) : (
+        <RowButton onClick={login} disabled={busy}>
+          {provider.loggedIn ? t("settings.ai.relogin") : t("settings.ai.login")}
+        </RowButton>
+      )}
+      {provider.loggedIn && (
+        <RowButton onClick={() => void run(() => ipc.providerLogout(provider.id))}>
+          {t("settings.ai.logout")}
+        </RowButton>
+      )}
+      {device && <p className="text-xs text-subtle">{device}</p>}
     </SettingsRow>
   );
 }
