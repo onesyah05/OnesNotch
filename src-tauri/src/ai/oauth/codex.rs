@@ -25,6 +25,8 @@ pub(crate) const ENDPOINTS: OAuthEndpoints = OAuthEndpoints {
 
 const DEVICE_USERCODE_URL: &str = "https://auth.openai.com/api/accounts/deviceauth/usercode";
 const DEVICE_TOKEN_URL: &str = "https://auth.openai.com/api/accounts/deviceauth/token";
+/// Where the user types the code. The usercode response does not include it.
+const DEVICE_VERIFICATION_URL: &str = "https://auth.openai.com/codex/device";
 /// The device endpoint states no expiry, so the flow bounds itself.
 const DEVICE_TTL: std::time::Duration = std::time::Duration::from_secs(900);
 /// The ChatGPT backend that serves Codex Responses.
@@ -41,11 +43,21 @@ pub(crate) struct DeviceStart {
     pub interval_seconds: u64,
 }
 
+/// Response of the usercode endpoint. Observed shape (2026-11):
+/// `{"device_auth_id": "...", "user_code": "...", "interval": "5", "expires_at": "<RFC 3339>"}`
+/// — note `interval` is a string, so it goes through the lenient reader.
 #[derive(Debug, Deserialize)]
 struct UserCodeResponse {
     device_auth_id: String,
+    #[serde(alias = "usercode")]
     user_code: String,
+    #[serde(
+        default,
+        alias = "verification_uri_complete",
+        alias = "verification_url"
+    )]
     verification_uri: Option<String>,
+    #[serde(default, deserialize_with = "super::lenient_u64")]
     interval: Option<u64>,
 }
 
@@ -84,7 +96,7 @@ pub(crate) async fn start_device(
         device_auth_id: body.device_auth_id,
         verification_url: body
             .verification_uri
-            .unwrap_or_else(|| "https://auth.openai.com/device".into()),
+            .unwrap_or_else(|| DEVICE_VERIFICATION_URL.into()),
         user_code: body.user_code,
         interval_seconds: body.interval.unwrap_or(5).max(1),
     })
@@ -187,11 +199,17 @@ pub(crate) async fn refresh(
 }
 
 fn into_tokens(response: super::TokenResponse) -> OAuthTokens {
+    // The ID token carries the signed-in email for "Connected as …".
+    let account_label = response
+        .id_token
+        .as_deref()
+        .and_then(jwt_payload)
+        .and_then(|claims| claims.get("email")?.as_str().map(str::to_owned));
     OAuthTokens {
         access_token: response.access_token,
         refresh_token: response.refresh_token,
         expires_at: super::expiry_from(response.expires_in),
-        account_label: None,
+        account_label,
     }
 }
 
@@ -237,6 +255,41 @@ mod tests {
             .encode(br#"{"chatgpt_account_id":"acct-123"}"#);
         let token = format!("{header}.{payload}.sig");
         assert_eq!(account_id(&token).as_deref(), Some("acct-123"));
+    }
+
+    #[test]
+    fn parses_the_real_usercode_response() {
+        // Shape returned by auth.openai.com: `interval` is a string.
+        let body = r#"{"device_auth_id":"dev-1","user_code":"ABCD-1234","interval":"5","expires_at":"2026-11-08T04:16:36.558444+00:00"}"#;
+        let parsed: UserCodeResponse = serde_json::from_str(body).unwrap();
+        assert_eq!(parsed.device_auth_id, "dev-1");
+        assert_eq!(parsed.user_code, "ABCD-1234");
+        assert_eq!(parsed.interval, Some(5));
+        assert_eq!(parsed.verification_uri, None);
+
+        let numeric: UserCodeResponse =
+            serde_json::from_str(r#"{"device_auth_id":"d","usercode":"X","interval":7}"#).unwrap();
+        assert_eq!(numeric.user_code, "X");
+        assert_eq!(numeric.interval, Some(7));
+    }
+
+    #[test]
+    fn token_response_accepts_string_expiry_and_reads_email() {
+        use base64::Engine as _;
+        let enc = |s: &str| base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(s);
+        let id_token = format!(
+            "{}.{}.sig",
+            enc(r#"{"alg":"none"}"#),
+            enc(r#"{"email":"a@b.co"}"#)
+        );
+        let body = format!(
+            r#"{{"access_token":"at","refresh_token":"rt","expires_in":"3600","id_token":"{id_token}"}}"#
+        );
+        let response: super::super::TokenResponse = serde_json::from_str(&body).unwrap();
+        assert_eq!(response.expires_in, Some(3600));
+        let tokens = into_tokens(response);
+        assert_eq!(tokens.account_label.as_deref(), Some("a@b.co"));
+        assert_eq!(tokens.refresh_token.as_deref(), Some("rt"));
     }
 
     #[test]

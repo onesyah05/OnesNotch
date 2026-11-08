@@ -318,7 +318,9 @@ impl Settings {
             prefs.model = prefs
                 .model
                 .as_deref()
-                .and_then(|model| ai::normalize_model(model).ok());
+                .and_then(|model| ai::normalize_model(model).ok())
+                // Models the vendor retired fall back to the current default.
+                .filter(|model| !ai::is_retired_model(model));
             prefs.base_url = if id.base_url_editable() {
                 prefs
                     .base_url

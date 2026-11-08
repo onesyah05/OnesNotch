@@ -622,6 +622,9 @@ pub async fn provider_login(
 #[tauri::command]
 pub fn provider_logout(app: AppHandle, id: ProviderId) -> AppResult<SettingsView> {
     oauth::delete_tokens(id)?;
+    if id == ProviderId::Antigravity {
+        oauth::antigravity::forget_project();
+    }
     Ok(broadcast_settings(
         &app,
         &app.state::<SettingsState>().get(),

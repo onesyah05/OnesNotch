@@ -47,7 +47,11 @@ pub enum LoginMethod {
 
 /// The user-facing progress of a login, streamed to the settings window.
 #[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "camelCase", tag = "type")]
+#[serde(
+    rename_all = "camelCase",
+    rename_all_fields = "camelCase",
+    tag = "type"
+)]
 pub enum LoginEvent {
     /// Codex only: show this URL and code, then wait for approval.
     DeviceCode {
@@ -138,15 +142,29 @@ pub(crate) async fn login<R: tauri::Runtime>(
                 verification_url: start.verification_url.clone(),
                 user_code: start.user_code.clone(),
             });
+            // Open the page where the code goes; the code itself stays visible
+            // in Settings. A failure to launch is not fatal: the URL is shown too.
+            if let Err(err) = open::that_detached(&start.verification_url) {
+                tracing::warn!("could not open the Codex sign-in page: {err}");
+            }
             codex::poll_until_done(&http, endpoints, &start).await?
         }
     };
 
     save_tokens(id, &tokens)?;
+    if id == crate::ai::ProviderId::Antigravity {
+        // A different account may have a different project.
+        antigravity::forget_project();
+    }
     on_event(LoginEvent::LoggedIn {
         account_label: tokens.account_label.clone(),
     });
     Ok(tokens.account_label)
+}
+
+/// A random id for per-request session headers.
+pub(crate) fn new_session_id() -> String {
+    pkce::random_uuid()
 }
 
 /// Returns a valid access token for `id`, refreshing it if it is stale.
@@ -211,7 +229,32 @@ pub(crate) fn expiry_from(expires_in: Option<u64>) -> u64 {
 pub(crate) struct TokenResponse {
     pub access_token: String,
     pub refresh_token: Option<String>,
+    #[serde(default, deserialize_with = "lenient_u64")]
     pub expires_in: Option<u64>,
+    /// OpenID token; Codex reads the account email out of it.
+    pub id_token: Option<String>,
+}
+
+/// Reads an optional count that providers send either as a JSON number or as
+/// a numeric string (OpenAI's device endpoint returns `"interval": "5"`).
+pub(crate) fn lenient_u64<'de, D>(deserializer: D) -> Result<Option<u64>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::de::Error as _;
+    match Option::<serde_json::Value>::deserialize(deserializer)? {
+        None | Some(serde_json::Value::Null) => Ok(None),
+        Some(serde_json::Value::Number(n)) => n
+            .as_u64()
+            .map(Some)
+            .ok_or_else(|| D::Error::custom("expected a non-negative integer")),
+        Some(serde_json::Value::String(s)) => s
+            .trim()
+            .parse::<u64>()
+            .map(Some)
+            .map_err(|_| D::Error::custom("expected a numeric string")),
+        Some(_) => Err(D::Error::custom("expected a number or numeric string")),
+    }
 }
 
 /// Reads a token response, mapping transport/HTTP failures to `AppError`.
@@ -274,4 +317,31 @@ pub(crate) async fn post_json<T: Serialize + ?Sized>(
         .await
         .map_err(|err| AppError::from(super::AiError::from(err)))?;
     read_token_response(response, provider).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn login_events_use_the_field_names_the_ui_reads() {
+        let device = serde_json::to_value(LoginEvent::DeviceCode {
+            verification_url: "https://auth.openai.com/codex/device".into(),
+            user_code: "ABCD-1234".into(),
+        })
+        .unwrap();
+        assert_eq!(device["type"], "deviceCode");
+        assert_eq!(
+            device["verificationUrl"],
+            "https://auth.openai.com/codex/device"
+        );
+        assert_eq!(device["userCode"], "ABCD-1234");
+
+        let done = serde_json::to_value(LoginEvent::LoggedIn {
+            account_label: Some("a@b.co".into()),
+        })
+        .unwrap();
+        assert_eq!(done["type"], "loggedIn");
+        assert_eq!(done["accountLabel"], "a@b.co");
+    }
 }

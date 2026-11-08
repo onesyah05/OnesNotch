@@ -1,6 +1,6 @@
 [package]
 name = "notch"
-version = "0.3.0"
+version = "0.3.1"
 description = "Dynamic-Island-style overlay for Windows, hidden from screen capture"
 authors = ["Notch"]
 edition = "2024"

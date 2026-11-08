@@ -72,6 +72,9 @@ fn with_auth(builder: RequestBuilder, cfg: &ProviderConfig) -> RequestBuilder {
                 format!("Bearer {}", cfg.key().unwrap_or_default()),
             )
             .header("anthropic-beta", super::oauth::claude::OAUTH_BETA)
+            // Subscription tokens are only honoured for the Claude Code client.
+            .header("user-agent", "claude-cli/2.0.0 (external, cli)")
+            .header("x-app", "cli")
     } else {
         builder.header("x-api-key", cfg.key().unwrap_or_default())
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ErrorText } from "../../components/error-text";
 import { RowButton, SectionTitle, SettingsRow, ToggleSwitch } from "../../components/rows";
@@ -67,7 +67,7 @@ export function ProviderSection() {
         </select>
       </SettingsRow>
 
-      {provider && <ProviderConfig provider={provider} run={run} busy={busy} />}
+      {provider && <ProviderConfig key={provider.id} provider={provider} run={run} busy={busy} />}
 
       <SettingsRow label={t("settings.ai.captureMode")}>
         <ModeSwitch
@@ -124,6 +124,36 @@ function ProviderConfig({
   busy: boolean;
 }) {
   const { t } = useTranslation();
+  // Models the provider offers, loaded as soon as it is usable (signed in,
+  // key saved, or no key needed) so the user picks instead of typing.
+  const [models, setModels] = useState<string[] | null>(null);
+  const [listFailed, setListFailed] = useState(false);
+  const signedIn = provider.supportsLogin && provider.loggedIn;
+  const canList =
+    signedIn ||
+    provider.hasKey ||
+    (!provider.supportsLogin &&
+      provider.keyPolicy !== "required" &&
+      (provider.baseUrl ?? "") !== "");
+
+  useEffect(() => {
+    if (!canList) return;
+    let live = true;
+    ipc
+      .providerTest(provider.id)
+      .then((found) => {
+        if (live) setModels(found);
+      })
+      .catch(() => {
+        // The Test row reports the error; the picker falls back to typing.
+        if (live) setListFailed(true);
+      });
+    return () => {
+      live = false;
+    };
+  }, [provider.id, canList]);
+
+  const loadingModels = canList && models === null && !listFailed;
 
   return (
     <div className="flex flex-col gap-2">
@@ -133,9 +163,9 @@ function ProviderConfig({
 
       {provider.baseUrlEditable && <BaseUrlRow provider={provider} run={run} />}
 
-      <ModelRow provider={provider} run={run} />
+      <ModelRow provider={provider} run={run} models={models} loading={loadingModels} />
 
-      <TestConnectionRow provider={provider} run={run} busy={busy} />
+      <TestConnectionRow provider={provider} run={run} busy={busy} onModels={setModels} />
 
       {!provider.hasKey && provider.keyPolicy === "required" && (
         <p className="text-xs text-live">{t("settings.ai.keyRequired")}</p>
@@ -252,9 +282,75 @@ function BaseUrlRow({ provider, run }: { provider: ProviderView; run: Run }) {
   );
 }
 
-function ModelRow({ provider, run }: { provider: ProviderView; run: Run }) {
+const CUSTOM_MODEL = "__custom__";
+
+function ModelRow({
+  provider,
+  run,
+  models,
+  loading,
+}: {
+  provider: ProviderView;
+  run: Run;
+  models: string[] | null;
+  loading: boolean;
+}) {
   const { t } = useTranslation();
-  const [model, setModel] = useState(provider.model ?? "");
+  const current = provider.model ?? "";
+  const [model, setModel] = useState(current);
+  // The list covers what the account offers; "type another" stays available
+  // for models the list does not show (new releases, custom servers).
+  const [typing, setTyping] = useState(false);
+  const hasList = Boolean(models && models.length > 0);
+  const selectClass =
+    "h-8 w-56 min-w-0 rounded-md bg-bg px-2 font-mono text-xs text-fg ring-1 ring-elevated outline-none focus:ring-subtle disabled:opacity-60";
+
+  const save = (next: string) => void run(() => ipc.providerUpdate(provider.id, next, null));
+
+  if (loading && !typing) {
+    return (
+      <SettingsRow label={t("settings.ai.model")} hint={t("settings.ai.modelPickHint")}>
+        <select disabled aria-label={t("settings.ai.model")} className={selectClass}>
+          <option>{t("settings.ai.modelLoading")}</option>
+        </select>
+      </SettingsRow>
+    );
+  }
+
+  if (hasList && !typing && models) {
+    // Keep a saved model the list no longer offers visible, so it can be seen
+    // and replaced rather than silently shown as something else.
+    const options = current && !models.includes(current) ? [current, ...models] : models;
+    return (
+      <SettingsRow label={t("settings.ai.model")} hint={t("settings.ai.modelPickHint")}>
+        <select
+          value={current}
+          aria-label={t("settings.ai.model")}
+          onChange={(event) => {
+            const next = event.target.value;
+            if (next === CUSTOM_MODEL) {
+              setModel(current);
+              setTyping(true);
+              return;
+            }
+            setModel(next);
+            save(next);
+          }}
+          className={selectClass}
+        >
+          <option value="">
+            {t("settings.ai.modelDefault", { model: provider.defaultModel })}
+          </option>
+          {options.map((id) => (
+            <option key={id} value={id}>
+              {id}
+            </option>
+          ))}
+          <option value={CUSTOM_MODEL}>{t("settings.ai.modelCustom")}</option>
+        </select>
+      </SettingsRow>
+    );
+  }
 
   return (
     <SettingsRow
@@ -268,9 +364,17 @@ function ModelRow({ provider, run }: { provider: ProviderView; run: Run }) {
         spellCheck={false}
         className="h-8 w-56 min-w-0 rounded-md bg-bg px-2 font-mono text-xs text-fg ring-1 ring-elevated outline-none placeholder:text-muted focus:ring-subtle"
       />
-      <RowButton onClick={() => void run(() => ipc.providerUpdate(provider.id, model, null))}>
+      <RowButton
+        onClick={() => {
+          save(model);
+          setTyping(false);
+        }}
+      >
         {t("settings.ai.save")}
       </RowButton>
+      {hasList && (
+        <RowButton onClick={() => setTyping(false)}>{t("settings.ai.modelFromList")}</RowButton>
+      )}
     </SettingsRow>
   );
 }
@@ -279,10 +383,12 @@ function TestConnectionRow({
   provider,
   run,
   busy,
+  onModels,
 }: {
   provider: ProviderView;
   run: Run;
   busy: boolean;
+  onModels: (models: string[]) => void;
 }) {
   const { t } = useTranslation();
   const [models, setModels] = useState<string[] | null>(null);
@@ -294,6 +400,7 @@ function TestConnectionRow({
     void run(() =>
       ipc.providerTest(provider.id).then((found) => {
         setModels(found);
+        onModels(found);
         return found;
       }),
     ).finally(() => setTesting(false));

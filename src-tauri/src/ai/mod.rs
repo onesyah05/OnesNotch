@@ -25,7 +25,7 @@ use serde_json::Value;
 use tokio_util::sync::CancellationToken;
 
 use crate::error::AppError;
-use sse::{Framing, Record};
+use sse::{Decoder, Framing, Record};
 
 const MODELS_TIMEOUT: Duration = Duration::from_secs(15);
 /// Error bodies are only read this far; they are short JSON in practice.
@@ -108,8 +108,8 @@ impl ProviderId {
             Self::Gemini => "gemini-flash-latest",
             Self::Ollama => "gemma3",
             Self::OpenaiCompatible => "",
-            Self::Codex => "gpt-5.1-codex",
-            Self::Antigravity => "gemini-2.5-pro",
+            Self::Codex => "gpt-6-sol",
+            Self::Antigravity => "gemini-3-flash",
         }
     }
 
@@ -155,6 +155,9 @@ pub struct ProviderConfig {
     /// True when `api_key` carries an OAuth access token (subscription login)
     /// rather than a pasted API key; selects Bearer auth + the OAuth beta.
     pub oauth: bool,
+    /// Antigravity only: the account's Cloud Code Assist project, which every
+    /// `generateContent` call must name or the upstream answers 403.
+    pub project: Option<String>,
 }
 
 // Hand-written so the key can never end up in a log line (rule 5).
@@ -263,6 +266,16 @@ pub(crate) trait Provider: Send + Sync {
     fn parse_complete(&self, body: &Value) -> Result<String, AiError>;
     fn models_request(&self, http: &Client, cfg: &ProviderConfig) -> RequestBuilder;
     fn parse_models(&self, body: &Value) -> Vec<String>;
+    /// The upstream only answers streamed requests (e.g. the ChatGPT Codex
+    /// backend), so the answer is read as SSE through [`Self::parse_record`].
+    fn sse_only(&self) -> bool {
+        false
+    }
+    /// `parse_models` already returns the provider's preferred order (best
+    /// first), so "test connection" must not re-sort it alphabetically.
+    fn keeps_model_order(&self) -> bool {
+        false
+    }
 }
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
@@ -373,6 +386,9 @@ fn classify_message(message: &str) -> AiError {
 fn classify_http(status: u16, body: &str) -> AiError {
     let message = error_message(body);
     match status {
+        403 if message.to_lowercase().contains("license") => {
+            AiError::Provider(format!("HTTP 403: {message}"))
+        }
         401 | 403 => AiError::InvalidKey,
         429 => AiError::Quota,
         503 | 529 => AiError::Busy,
@@ -399,6 +415,12 @@ async fn read_error(mut response: reqwest::Response) -> AiError {
     // Only the status is logged; bodies can echo request content (rule 9).
     tracing::warn!("provider returned HTTP {status}");
     classify_http(status, &String::from_utf8_lossy(&body))
+}
+
+/// Default models the vendors have retired; stored choices of these are
+/// dropped so the current default applies.
+pub fn is_retired_model(model: &str) -> bool {
+    matches!(model, "gpt-5.1-codex" | "gemini-3-pro-preview")
 }
 
 /// Validates a user-supplied base URL and strips the trailing slash.
@@ -494,6 +516,9 @@ async fn request_answer(
     if !response.status().is_success() {
         return Err(read_error(response).await);
     }
+    if provider.sse_only() {
+        return collect_stream(provider, response, cancel).await;
+    }
 
     let body: Value = tokio::select! {
         biased;
@@ -501,6 +526,45 @@ async fn request_answer(
         json = response.json() => json?,
     };
     provider.parse_complete(&body).map(Some)
+}
+
+/// Reads a streamed answer to the end and returns the joined text.
+async fn collect_stream(
+    provider: &dyn Provider,
+    mut response: reqwest::Response,
+    cancel: &CancellationToken,
+) -> Result<Option<String>, AiError> {
+    let mut decoder = Decoder::new(provider.framing());
+    let mut text = String::new();
+    loop {
+        let chunk = tokio::select! {
+            biased;
+            () = cancel.cancelled() => return Ok(None),
+            chunk = response.chunk() => chunk?,
+        };
+        let (records, ended) = match chunk {
+            Some(bytes) => (decoder.push(&bytes), false),
+            None => (decoder.finish(), true),
+        };
+        for record in &records {
+            let parsed = provider.parse_record(record)?;
+            text.push_str(&parsed.text);
+            if parsed.done {
+                return finish_stream(text);
+            }
+        }
+        if ended {
+            return finish_stream(text);
+        }
+    }
+}
+
+fn finish_stream(text: String) -> Result<Option<String>, AiError> {
+    if text.is_empty() {
+        Err(classify_message(""))
+    } else {
+        Ok(Some(text))
+    }
 }
 
 /// Lists models; doubles as "test connection" for the URL and key.
@@ -519,8 +583,11 @@ pub(crate) async fn list_models(
     }
     let body: Value = response.json().await?;
     let mut models = provider.parse_models(&body);
-    models.sort();
-    models.dedup();
+    if !provider.keeps_model_order() {
+        models.sort();
+    }
+    let mut seen = std::collections::HashSet::new();
+    models.retain(|model| seen.insert(model.clone()));
     Ok(models)
 }
 
@@ -539,6 +606,7 @@ pub(crate) mod test_support {
             model: "test-model".into(),
             api_key: Some("sk-test-123".into()),
             oauth: false,
+            project: None,
         }
     }
 

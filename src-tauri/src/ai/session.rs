@@ -222,6 +222,7 @@ pub(crate) fn provider_config<R: Runtime>(
         model: settings.model(id),
         api_key,
         oauth: false,
+        project: None,
     })
 }
 
@@ -239,6 +240,10 @@ pub(crate) async fn resolve_config<R: Runtime>(
         // rides in the `api_key` slot as a Bearer credential.
         let token = oauth::access_token(app, id).await?;
         let mut cfg = provider_config(app, id)?;
+        if id == ProviderId::Antigravity {
+            oauth::antigravity::refresh_client_version().await;
+            cfg.project = Some(oauth::antigravity::project(&token).await?);
+        }
         cfg.api_key = Some(token);
         cfg.oauth = true;
         return Ok(cfg);

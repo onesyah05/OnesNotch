@@ -137,7 +137,12 @@
       "logout": "Keluar",
       "relogin": "Login ulang",
       "loginDone": "Tersambung.",
-      "devicePrompt": "Buka {{url}} di browser dan masukkan kode: {{code}}"
+      "devicePrompt": "Buka {{url}} di browser dan masukkan kode: {{code}}",
+      "modelPickHint": "Pilih model yang tersedia di provider ini, atau ketik model lain.",
+      "modelDefault": "Bawaan ({{model}})",
+      "modelLoading": "Memuat daftar model…",
+      "modelCustom": "Ketik model lain…",
+      "modelFromList": "Pilih dari daftar"
     },
     "hotkeys": {
       "title": "Pintasan",

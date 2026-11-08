@@ -137,7 +137,12 @@
       "logout": "Sign out",
       "relogin": "Sign in again",
       "loginDone": "Connected.",
-      "devicePrompt": "Open {{url}} in your browser and enter the code: {{code}}"
+      "devicePrompt": "Open {{url}} in your browser and enter the code: {{code}}",
+      "modelPickHint": "Pick a model this provider offers, or type another one.",
+      "modelDefault": "Default ({{model}})",
+      "modelLoading": "Loading models…",
+      "modelCustom": "Type another model…",
+      "modelFromList": "Pick from list"
     },
     "hotkeys": {
       "title": "Hotkeys",
